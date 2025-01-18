@@ -1,0 +1,14 @@
+### IntelliJ IDEA ###
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+
+### Files ###
+craftpix-net-436971-free-top-down-roguelike-game-kit-pixel-art.zip
+Sprites/
