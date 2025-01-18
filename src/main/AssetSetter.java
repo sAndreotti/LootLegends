@@ -1,5 +1,6 @@
 package main;
 
+import entity.NPC_OldMan;
 import object.*;
 
 public class AssetSetter {
@@ -11,7 +12,7 @@ public class AssetSetter {
     }
 
     public void setObject() {
-        // Keys
+        /*// Keys
         gp.obj[0] = new OBJ_Key(gp);
         gp.obj[0].worldX = 10*gp.tileSize;
         gp.obj[0].worldY = 5*gp.tileSize;
@@ -46,8 +47,15 @@ public class AssetSetter {
         gp.obj[7] = new OBJ_Book(gp);
         gp.obj[7].worldX = 10*gp.tileSize;
         gp.obj[7].worldY = 10*gp.tileSize;
+        */
 
+    }
 
+    public void setNpc(){
+
+        gp.npc[0] = new NPC_OldMan(gp);
+        gp.npc[0].worldX = gp.tileSize*10;
+        gp.npc[0].worldY = gp.tileSize*10;
     }
 
 }
