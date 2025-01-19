@@ -30,7 +30,7 @@ public class GamePanel extends JPanel implements Runnable {
     // System
     TileManager tileM = new TileManager(this);
     public AssetSetter aSetter = new AssetSetter(this);
-    KeyHandler keyH = new KeyHandler(this);
+    public KeyHandler keyH = new KeyHandler(this);
     public Thread gameThread;
     public Sound music = new Sound();
     public Sound se = new Sound();
@@ -40,19 +40,20 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Entities
     public Player player = new Player(this, keyH);
-    public SuperObject obj[] = new SuperObject[10];
+    public SuperObject[] obj = new SuperObject[10];
 
     // Entities
-    public Entity npc[] = new Entity[10];
-
+    public Entity[] npc = new Entity[10];
 
     // Collisions
     public CollisionChecker cChecker = new CollisionChecker(this);
 
     // Game state
     public int gameState;
+    public final int titleState = 0;
     public final int playState = 1;
     public final int pauseState = 2;
+    public final int dialogueState = 3;
 
 
     public GamePanel() {
@@ -67,9 +68,10 @@ public class GamePanel extends JPanel implements Runnable {
         aSetter.setObject();
         aSetter.setNpc();
 
-        playMusic(0);
+        // Intro music
+        //playMusic(0);
 
-        gameState = playState;
+        gameState = titleState;
     }
 
     public void startGameThread() {
@@ -130,6 +132,13 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
+        // Title Screen
+        if(gameState == titleState) {
+            ui.draw(g2);
+
+            return;
+        }
+
         // Debug
         long drawStart = 0;
         if (keyH.checkDrawTime){
@@ -140,16 +149,16 @@ public class GamePanel extends JPanel implements Runnable {
         tileM.draw(g2);
 
         // Objects
-        for(int i=0; i<obj.length; i++) {
-            if(obj[i]!=null) {
-                obj[i].draw(g2, this);
+        for (SuperObject superObject : obj) {
+            if (superObject != null) {
+                superObject.draw(g2, this);
             }
         }
 
         // NPC
-        for(int i=0; i<npc.length; i++) {
-            if(npc[i] != null){
-                npc[i].draw(g2);
+        for (Entity entity : npc) {
+            if (entity != null) {
+                entity.draw(g2);
             }
         }
 

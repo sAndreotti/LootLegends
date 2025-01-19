@@ -2,19 +2,15 @@ package entity;
 
 import main.GamePanel;
 import main.KeyHandler;
-import main.UtilityTool;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.Objects;
+import java.util.ArrayList;
 
 public class Player extends Entity {
     KeyHandler keyH;
-    UtilityTool uTool = new UtilityTool();
     boolean idle = true;
-    public int character = 3;
+    public int character = 1;
 
     public final int screenX;
     public final int screenY;
@@ -28,8 +24,10 @@ public class Player extends Entity {
         screenX = gp.screenWidth/2 - (spriteDim/2);
         screenY = gp.screenHeight/2 - (spriteDim/2);
 
+        System.out.println("Preparing the player...");
         setDefaultValues();
-        getPlayerImage();
+        getImage("player", this.character);
+        System.out.println(" ");
 
         // Collision
         solidArea = new Rectangle(30, 30, 35, 35);
@@ -46,31 +44,17 @@ public class Player extends Entity {
         direction = "right";
     }
 
-    public void getPlayerImage() {
-        // 0 -> 5 Movement, 6 -> 9 Idle
-        uTool.loadEntitySprite(up, "/player/"+character+"/U_Walk.png", false, 6, spriteDim, gp.scale);
-        uTool.loadEntitySprite(up, "/player/"+character+"/U_Idle.png", false,4, spriteDim, gp.scale);
+    public void updateSprite(int i){
+        if(i != this.character){
+            this.character = i;
 
-        uTool.loadEntitySprite(down, "/player/"+character+"/D_Walk.png", false, 6, spriteDim, gp.scale);
-        uTool.loadEntitySprite(down, "/player/"+character+"/D_Idle.png", false, 4, spriteDim, gp.scale);
-
-        uTool.loadEntitySprite(left, "/player/"+character+"/S_Walk.png", false, 6, spriteDim, gp.scale);
-        uTool.loadEntitySprite(left, "/player/"+character+"/S_Idle.png", false, 4, spriteDim, gp.scale);
-
-        uTool.loadEntitySprite(right, "/player/"+character+"/S_Walk.png", true, 6, spriteDim, gp.scale);
-        uTool.loadEntitySprite(right, "/player/"+character+"/S_Idle.png", true, 4, spriteDim, gp.scale);
-
-        try{
-            shadow = uTool.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().
-                    getResourceAsStream("/player/Other/shadow.png"))), 13*gp.scale, 6*gp.scale);
-        } catch (IOException e){
-            e.printStackTrace();
+            // Clearing not used images
+            up = new ArrayList<>();
+            down = new ArrayList<>();
+            left = new ArrayList<>();
+            right = new ArrayList<>();
+            getImage("player", this.character);
         }
-
-        System.out.println("Up sprites dim: " + up.size());
-        System.out.println("Down sprites dim: " + down.size());
-        System.out.println("Left sprites dim: " + left.size());
-        System.out.println("Right sprites dim: " + right.size());
     }
 
     public void update() {
@@ -145,9 +129,17 @@ public class Player extends Entity {
     }
 
     public void interactNPC(int i) {
-        if(i != -1) {
-
+        if(i != -1 && gp.keyH.enterPressed) {
+            gp.gameState = gp.dialogueState;
+            gp.npc[i].speak();
         }
+        gp.keyH.enterPressed = false;
+    }
+
+    public void speak(){
+        // For specific iterations
+        super.speak();
+
     }
 
     public void draw(Graphics2D g2) {

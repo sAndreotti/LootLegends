@@ -1,51 +1,49 @@
 package entity;
 
 import main.GamePanel;
-import main.UtilityTool;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.IOException;
-import java.util.Objects;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class NPC_OldMan extends Entity{
 
-    UtilityTool uTool = new UtilityTool();
     public int character = 2;
 
     public NPC_OldMan(GamePanel gp){
         super(gp);
-
         direction = "down";
         speed = 1;
 
-        solidArea = new Rectangle(35, 40, 25, 25);
+        //35, 40, 25, 25
+        solidArea = new Rectangle(35, 7, 25, 64);
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
-        getNPCImage();
+
+        getImage("npc", character);
+        setDialogue();
     }
 
-    public void getNPCImage() {
-        // 0 -> 5 Movement, 6 -> 9 Idle
-        uTool.loadEntitySprite(up, "/npc/"+character+"/U_Walk.png", false, 6, spriteDim, gp.scale);
-        uTool.loadEntitySprite(up, "/npc/"+character+"/U_Idle.png", false,4, spriteDim, gp.scale);
+    // Here becuse maybe you want different NPC for different players
+    public void updateSprite(int i){
+        if(i != this.character){
+            this.character = i;
 
-        uTool.loadEntitySprite(down, "/npc/"+character+"/D_Walk.png", false, 6, spriteDim, gp.scale);
-        uTool.loadEntitySprite(down, "/npc/"+character+"/D_Idle.png", false, 4, spriteDim, gp.scale);
-
-        uTool.loadEntitySprite(left, "/npc/"+character+"/S_Walk.png", false, 6, spriteDim, gp.scale);
-        uTool.loadEntitySprite(left, "/npc/"+character+"/S_Idle.png", false, 4, spriteDim, gp.scale);
-
-        uTool.loadEntitySprite(right, "/npc/"+character+"/S_Walk.png", true, 6, spriteDim, gp.scale);
-        uTool.loadEntitySprite(right, "/npc/"+character+"/S_Idle.png", true, 4, spriteDim, gp.scale);
-
-        try{
-            shadow = uTool.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().
-                    getResourceAsStream("/npc/Other/shadow.png"))), 13*gp.scale, 6*gp.scale);
-        } catch (IOException e){
-            e.printStackTrace();
+            // Clearing not used images
+            up = new ArrayList<>();
+            down = new ArrayList<>();
+            left = new ArrayList<>();
+            right = new ArrayList<>();
+            getImage("npc", character);
         }
+    }
+
+    public void setDialogue() {
+        dialogues[0] = "Hello adventurer.";
+        dialogues[1] = "So you've come to this dungeon\nfor the treasure?";
+        dialogues[2] = "I was a great adventurer..\nbefore an arrow hit my knee.";
+        dialogues[3] = "Well, good luck\n and keep an one on arrows.";
+
     }
 
     public void setAction() {
@@ -54,15 +52,18 @@ public class NPC_OldMan extends Entity{
         if(actionLockCounter == gp.FPS*2){
             Random random = new Random();
             int i = random.nextInt(100)+1;
+            super.idle = false;
 
-            if(i<=25) {
+            if(i<=20) {
                 direction = "up";
-            } else if(i<= 50) {
+            } else if(i<= 40) {
                 direction = "down";
-            } else if(i<=75) {
+            } else if(i<=60) {
                 direction = "left";
-            } else {
+            } else if(i<=80) {
                 direction = "right";
+            } else {
+                super.idle = true;
             }
 
             actionLockCounter = 0;

@@ -6,7 +6,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Arrays;
 import java.util.Objects;
 
 import main.UtilityTool;
@@ -26,8 +25,10 @@ public class TileManager {
         tile = new Tile[110];
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
+        System.out.println("Loading map...");
         loadSprites("/maps/spritesheet.png");
         loadMap("/maps/map.json");
+        System.out.println(" ");
     }
 
     public void loadSprites(String spritePath){
