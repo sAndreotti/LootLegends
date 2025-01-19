@@ -1,5 +1,8 @@
 package main;
 
+import object.OBJ_Heart;
+import object.SuperObject;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -16,16 +19,28 @@ public class UI {
     public String currentDialogue = "";
     public int commandNum = 0;
     BufferedImage selector = null;
+
+    // Player status
+    public BufferedImage[] heart_bar = new BufferedImage[3];
+    public BufferedImage heart_full, heart_half, heart_blank;
+
     // Class selection
     public int titleScreenState = 0;
     BufferedImage archer = null;
     BufferedImage knight = null;
     BufferedImage mage = null;
 
+    // Colors
+    Color textColor = new Color(192, 203, 220);
+    Color titleColor = new Color(254, 174, 52);
+    Color backgroundColor = new Color(24, 20, 37);
+    Color backgroundDialogueColor = new Color(0, 0, 0, 220);
+
     public UI(GamePanel gp) {
         this.gp = gp;
         uTool  = new UtilityTool();
 
+        // Load font
         try{
             InputStream is = getClass().getResourceAsStream("/font/VT323-Regular.ttf");
             assert is != null;
@@ -33,6 +48,25 @@ public class UI {
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
         }
+
+        // Load selector image
+        try {
+            selector = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/gui/title/selector.png")));
+            selector = uTool.scaleImage(selector, 10*gp.scale, 10*gp.scale);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Load class images
+        loadClasses();
+
+        // Create HUD object
+        SuperObject heart = new OBJ_Heart(gp);
+        heart_full = heart.image;
+        heart_half = heart.image2;
+        heart_blank = heart.image3;
+        String[] paths = {"/gui/status/Tile_01.png", "/gui/status/Tile_02.png", "/gui/status/Tile_03.png"};
+        loadBar(heart_bar, paths);
 
     }
 
@@ -45,52 +79,69 @@ public class UI {
 
        if(gp.gameState == gp.titleState) {
            // Title
-           loadClasses();
            drawTitleScreen();
        } else if(gp.gameState == gp.playState) {
            // Play
-
+           drawPlayerLife();
        } else if(gp.gameState == gp.pauseState) {
            // Pause
+           drawPlayerLife();
            drawPauseScreen();
        } else if(gp.gameState == gp.dialogueState) {
            // Dialogue
+           drawPlayerLife();
            drawDialogueScreen();
        }
     }
 
-    public void loadClasses() {
-        try{
-            archer = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/1/static.png")));
-            archer = uTool.scaleImage(archer, 32*(gp.scale+1), 32*gp.scale+1);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+    public void drawPlayerLife() {
+        int x = gp.tileSize/2;
+        int y = gp.tileSize/2;
+        int i = 0;
+
+        // Calculating how much bar display
+        int imgX = x-(gp.tileSize/3);
+        int nBars = (gp.player.maxLife/2)-2;
+        g2.drawImage(heart_bar[0], imgX, y-(3*gp.scale), null);
+        for(int j=1; j<nBars; j++){
+            g2.drawImage(heart_bar[1], imgX+(gp.tileSize*(j)), y-(3*gp.scale), null);
+        }
+        g2.drawImage(heart_bar[2], imgX+((nBars)*gp.tileSize), y-(3*gp.scale), null);
+
+        // Blank heart
+        while(i<gp.player.maxLife/2){
+            g2.drawImage(heart_blank, x, y, null);
+            i++;
+            x += gp.tileSize-8;
         }
 
-        try{
-            knight = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/2/static.png")));
-            knight = uTool.scaleImage(knight, 32*(gp.scale+1), 32*gp.scale);
-        } catch (IOException e) {
-            e.printStackTrace();
+        // Reset
+        x = gp.tileSize/2;
+        i = 0;
+
+        // Draw current life
+        while(i < gp.player.life){
+            g2.drawImage(heart_half, x, y, null);
+            i++;
+            if(i < gp.player.life) {
+                g2.drawImage(heart_full, x, y, null);
+            }
+            i++;
+            x += gp.tileSize-8;
         }
 
-        try{
-            mage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/3/static.png")));
-            mage = uTool.scaleImage(mage, 32*gp.scale, 32*gp.scale);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void drawTitleScreen() {
         // Window color
-        g2.setColor(new Color(24, 20, 37));
+        g2.setColor(backgroundColor);
         g2.drawRect(0, 0, gp.screenWidth, gp.screenHeight);
         if(titleScreenState == 0){
 
             // Title Background
             try{
-                BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/gui/title.png")));
+                BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/gui/title/title.png")));
                 image = uTool.scaleImage(image, 194*gp.scale, 64*gp.scale);
                 g2.drawImage(image, gp.tileSize*2, gp.tileSize/4, null);
             } catch (IOException e) {
@@ -107,23 +158,20 @@ public class UI {
             g2.drawString(text, x+5, y+5);
 
             // Draw Title
-            g2.setColor(new Color(254, 174, 52));
+            g2.setColor(titleColor);
             g2.drawString(text, x, y);
 
             // Player image
             x = gp.screenWidth/2 - (gp.tileSize*2);
             y += gp.tileSize*2;
+            g2.drawImage(gp.player.shadow, x+(gp.player.spriteDim)+30, y+(gp.player.spriteDim*3)+15,
+                    gp.tileSize+(gp.tileSize/2), gp.tileSize-(gp.tileSize/2),null);
             g2.drawImage(archer, x, y, gp.tileSize*4, gp.tileSize*4, null);
 
-            // Menu
-            try {
-                selector = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/gui/selector.png")));
-                selector = uTool.scaleImage(selector, 10*gp.scale, 10*gp.scale);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+            // Menu options
+            g2.setColor(textColor);
             g2.setFont(g2.getFont().deriveFont(Font.BOLD, 48F));
+
             text = "New Game";
             x = getXforCenteredText(text);
             y += gp.tileSize*4;
@@ -158,21 +206,25 @@ public class UI {
 
         } else if(titleScreenState == 1){
             // Class selection
-            g2.setColor(new Color(254, 174, 52));
+            g2.setColor(textColor);
             g2.setFont(g2.getFont().deriveFont(Font.BOLD, 48F));
 
             String text = "Select your class";
             int x = getXforCenteredText(text);
-            int y = gp.tileSize*3;
+            int y = gp.tileSize*2 + (gp.tileSize/4);
             g2.drawString(text, x, y);
+
+            int imgX = gp.screenWidth/2-(gp.tileSize*2);
+            int imgY = y+gp.tileSize;
+            // Draw the shadow
+            if(commandNum!=3) {
+                g2.drawImage(gp.player.shadow, imgX + (gp.player.spriteDim/2)+gp.tileSize-3, imgY +(gp.tileSize*2) + (gp.tileSize/3),
+                        gp.tileSize + (gp.tileSize / 2), gp.tileSize - (gp.tileSize / 2), null);
+            }
 
             text = "Archer";
             x = getXforCenteredText(text);
             y += gp.tileSize*5;
-
-            int imgX = gp.screenWidth/2-(gp.tileSize*2);
-            int imgY = y-(gp.tileSize*4);
-
             g2.drawString(text, x, y);
             if(commandNum == 0) {
                 g2.drawImage(archer, imgX, imgY,gp.tileSize*4, gp.tileSize*4, null);
@@ -238,13 +290,47 @@ public class UI {
     }
 
     public void drawSubWindow(int x, int y, int width, int height) {
-        g2.setColor(new Color(0, 0, 0, 220));
+        g2.setColor(backgroundDialogueColor);
         g2.fillRoundRect(x, y, width, height, 35, 35);
 
-        g2.setColor(new Color(192, 203, 220));
+        g2.setColor(textColor);
         g2.setStroke(new BasicStroke(5));
         g2.drawRoundRect(x+5, y+5, width-10, height-10, 25, 25);
 
+    }
+
+    public void loadClasses() {
+        try{
+            archer = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/1/static.png")));
+            archer = uTool.scaleImage(archer, 32*(gp.scale+1), 32*gp.scale+1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try{
+            knight = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/2/static.png")));
+            knight = uTool.scaleImage(knight, 32*(gp.scale+1), 32*gp.scale);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try{
+            mage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/3/static.png")));
+            mage = uTool.scaleImage(mage, 32*gp.scale, 32*gp.scale);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadBar(BufferedImage[] bar, String[] paths) {
+        for(int i=0; i<bar.length; i++) {
+            try{
+                bar[i] = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(paths[i])));
+                bar[i] = uTool.scaleImage(bar[i], 16*(gp.scale), 16*gp.scale);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public int getXforCenteredText(String text) {

@@ -39,9 +39,12 @@ public class Player extends Entity {
         //Start position
         worldX = gp.tileSize*5;
         worldY = gp.tileSize*7;
-
         speed = 4;
         direction = "right";
+
+        // Player status
+        maxLife = 20;
+        life = maxLife;
     }
 
     public void updateSprite(int i){
@@ -85,6 +88,11 @@ public class Player extends Entity {
         // Check NPC collision
         int npcIndex = gp.cChecker.checkEntity(this, gp.npc);
         interactNPC(npcIndex);
+
+        // Check event
+        gp.eHandler.checkEvent();
+
+        gp.keyH.enterPressed = false;
 
         // Moving
         if(!collisionOn && !idle) {
@@ -133,7 +141,6 @@ public class Player extends Entity {
             gp.gameState = gp.dialogueState;
             gp.npc[i].speak();
         }
-        gp.keyH.enterPressed = false;
     }
 
     public void speak(){

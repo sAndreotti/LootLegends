@@ -26,7 +26,7 @@ public class Entity {
     public ArrayList<BufferedImage> left = new ArrayList<>();
     public ArrayList<BufferedImage> right = new ArrayList<>();
     public String direction;
-    BufferedImage shadow;
+    public BufferedImage shadow;
 
     // Sprite change
     public int spriteCounter = 0;
@@ -39,6 +39,10 @@ public class Entity {
     public int solidAreaDefaultX, solidAreaDefaultY;
     public boolean collisionOn = false;
     public boolean idle = false;
+
+    // Character status
+    public int maxLife;
+    public int life;
 
     public Entity(GamePanel gp) {
         this.gp = gp;

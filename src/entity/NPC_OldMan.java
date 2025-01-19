@@ -24,7 +24,7 @@ public class NPC_OldMan extends Entity{
         setDialogue();
     }
 
-    // Here becuse maybe you want different NPC for different players
+    // Here because maybe you want different NPC for different players
     public void updateSprite(int i){
         if(i != this.character){
             this.character = i;

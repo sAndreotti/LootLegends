@@ -34,6 +34,7 @@ public class GamePanel extends JPanel implements Runnable {
     public Thread gameThread;
     public Sound music = new Sound();
     public Sound se = new Sound();
+    public EventHandler eHandler = new EventHandler(this);
 
     // UI
     public UI ui = new UI(this);
@@ -111,7 +112,6 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-
         if(gameState == playState){
             // Play
             player.update();
@@ -124,6 +124,8 @@ public class GamePanel extends JPanel implements Runnable {
 
         }else if(gameState == pauseState){
             // Pause
+        }else if(gameState == dialogueState){
+
         }
 
     }
