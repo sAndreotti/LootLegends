@@ -1,5 +1,6 @@
 package object;
 
+import entity.Entity;
 import main.GamePanel;
 
 import javax.imageio.ImageIO;
@@ -8,7 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class OBJ_Chest extends SuperObject{
+public class OBJ_Chest extends Entity {
 
     public ArrayList<BufferedImage> images = new ArrayList<>();
     public String facing;
@@ -19,6 +20,8 @@ public class OBJ_Chest extends SuperObject{
     int spriteCounter = 0;
 
     public OBJ_Chest(GamePanel gp, String facing) {
+        super(gp);
+
         name = "Chest";
         spriteDimX = 16;
         spriteDimY = 24;
@@ -82,7 +85,6 @@ public class OBJ_Chest extends SuperObject{
         }
     }
 
-    @Override
     public void open() {
         image = images.get(2);
     }

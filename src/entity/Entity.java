@@ -13,8 +13,9 @@ import java.util.Objects;
 public class Entity {
     public int worldX, worldY;
     public int speed;
-    GamePanel gp;
-    UtilityTool uTool = new UtilityTool();
+    public GamePanel gp;
+    protected UtilityTool uTool = new UtilityTool();
+    public int type; // 0 0 player, 1 = npc, 2 = monsters
 
     // Dialogues
     String[] dialogues = new String[20];
@@ -25,7 +26,7 @@ public class Entity {
     public ArrayList<BufferedImage> down = new ArrayList<>();
     public ArrayList<BufferedImage> left = new ArrayList<>();
     public ArrayList<BufferedImage> right = new ArrayList<>();
-    public String direction;
+    public String direction = "down";
     public BufferedImage shadow;
 
     // Sprite change
@@ -34,21 +35,46 @@ public class Entity {
     public int spriteDim = 32;
     public int actionLockCounter = 0;
 
+    // Invincible
+    public boolean invincible = false;
+    public int invincibleCounter = 0;
+
     // Collision
     public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
     public int solidAreaDefaultX, solidAreaDefaultY;
     public boolean collisionOn = false;
     public boolean idle = false;
 
+    // Atttack
+    public Rectangle attackArea = new Rectangle(0, 0, 0, 0);
+    public boolean attack;
+
     // Character status
     public int maxLife;
     public int life;
+    public boolean hurt = false;
+    public boolean hpBarOn = false;
+    public int hpBarCounter = 0;
+
+    // Dying
+    public boolean alive = true;
+    public boolean dying = false;
+
+    // Objects
+    public BufferedImage image, image2, image3;
+    public String name;
+    public boolean collision = false;    public int spriteDimX;
+    public int spriteDimY;
+    public int diffX = 0;
+    public int diffY = 0;
 
     public Entity(GamePanel gp) {
         this.gp = gp;
     }
 
     public void setAction() { }
+    public void damageReaction() { }
+    public void attack() { }
 
     public void speak() {
         if(dialogues[dialogueIndex] == null) {
@@ -68,24 +94,92 @@ public class Entity {
     }
 
     public void getImage(String entity, int character) {
-        // 0 -> 5 Movement, 6 -> 9 Idle
+        // 0 -> 5 Movement, 6 -> 9 Idle, 10 -> 13 Attack, 14 -> 21 Diyng, 22 -> 23 Hurt
         uTool.loadEntitySprite(up, "/"+entity+"/"+character+"/U_Walk.png", false, 6, spriteDim, gp.scale);
         uTool.loadEntitySprite(up, "/"+entity+"/"+character+"/U_Idle.png", false,4, spriteDim, gp.scale);
+        uTool.loadEntitySprite(up, "/"+entity+"/"+character+"/U_Attack.png", false,4, spriteDim, gp.scale);
+        uTool.loadEntitySprite(up, "/"+entity+"/"+character+"/U_Death.png", false,8, spriteDim, gp.scale);
+        uTool.loadEntitySprite(up, "/"+entity+"/"+character+"/U_Hurt.png", false,2, spriteDim, gp.scale);
 
         uTool.loadEntitySprite(down, "/"+entity+"/"+character+"/D_Walk.png", false, 6, spriteDim, gp.scale);
         uTool.loadEntitySprite(down, "/"+entity+"/"+character+"/D_Idle.png", false, 4, spriteDim, gp.scale);
+        uTool.loadEntitySprite(down, "/"+entity+"/"+character+"/D_Attack.png", false,4, spriteDim, gp.scale);
+        uTool.loadEntitySprite(down, "/"+entity+"/"+character+"/D_Death.png", false,8, spriteDim, gp.scale);
+        uTool.loadEntitySprite(down, "/"+entity+"/"+character+"/D_Hurt.png", false,2, spriteDim, gp.scale);
 
         uTool.loadEntitySprite(left, "/"+entity+"/"+character+"/S_Walk.png", false, 6, spriteDim, gp.scale);
         uTool.loadEntitySprite(left, "/"+entity+"/"+character+"/S_Idle.png", false, 4, spriteDim, gp.scale);
+        uTool.loadEntitySprite(left, "/"+entity+"/"+character+"/S_Attack.png", false,4, spriteDim, gp.scale);
+        uTool.loadEntitySprite(left, "/"+entity+"/"+character+"/S_Death.png", false,8, spriteDim, gp.scale);
+        uTool.loadEntitySprite(left, "/"+entity+"/"+character+"/S_Hurt.png", false,2, spriteDim, gp.scale);
 
         uTool.loadEntitySprite(right, "/"+entity+"/"+character+"/S_Walk.png", true, 6, spriteDim, gp.scale);
         uTool.loadEntitySprite(right, "/"+entity+"/"+character+"/S_Idle.png", true, 4, spriteDim, gp.scale);
+        uTool.loadEntitySprite(right, "/"+entity+"/"+character+"/S_Attack.png", true,4, spriteDim, gp.scale);
+        uTool.loadEntitySprite(right, "/"+entity+"/"+character+"/S_Death.png", true,8, spriteDim, gp.scale);
+        uTool.loadEntitySprite(right, "/"+entity+"/"+character+"/S_Hurt.png", true,2, spriteDim, gp.scale);
 
         try{
             shadow = uTool.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().
                     getResourceAsStream("/npc/Other/shadow.png"))), 13*gp.scale, 6*gp.scale);
         } catch (IOException e){
             e.printStackTrace();
+        }
+
+        System.out.println("Loaded " + up.size() + " images per direction");
+    }
+
+    public void getOBJImage(String path) {
+        try{
+            image = uTool.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().
+                    getResourceAsStream(path))), spriteDimX*gp.scale, spriteDimY*gp.scale);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void hurtAnimation() {
+        System.out.println("Hurt animation");
+        spriteCounter++;
+        if(spriteCounter>10){
+            // Sprite Attack
+            if(spriteNum < 23){
+                spriteNum++;
+                /*switch (direction) {
+                    case "up" -> worldY += 5 * gp.scale;
+                    case "down" -> worldY -= 5 * gp.scale;
+                    case "left" -> worldX += 5 * gp.scale;
+                    case "right" -> worldX -= 5 * gp.scale;
+                }*/
+            }
+            spriteCounter = 0;
+        }
+
+        // End Hurt
+        if(life>0 && spriteNum>=23){
+            spriteNum = 0;
+            hurt = false;
+            invincible = true;
+            System.out.println("End animation");
+        } else if(life <= 0) {
+            // Dying
+            dying = true;
+            hurt = false;
+            System.out.println("End animation");
+        }
+    }
+
+    public void dyingAnimation() {
+        spriteCounter++;
+        if(spriteCounter>8){
+            // Sprite Attack
+            if(spriteNum < 21){
+                spriteNum++;
+            } else {
+                dying = false;
+                alive = false;
+            }
+            spriteCounter = 0;
         }
     }
 
@@ -95,7 +189,16 @@ public class Entity {
         collisionOn = false;
         gp.cChecker.checkTile(this);
         gp.cChecker.checkObject(this, false);
-        gp.cChecker.checkPlayer(this);
+        gp.cChecker.checkEntity(this, gp.npc);
+        gp.cChecker.checkEntity(this, gp.monster);
+        boolean contactPlayer = gp.cChecker.checkPlayer(this);
+
+        if(this.type == 2 && contactPlayer) {
+            if(!gp.player.invincible) {
+                gp.playSE(6);
+                gp.player.contactMonster(0);
+            }
+        }
 
         // Moving
         if(!collisionOn && !idle) {
@@ -109,26 +212,43 @@ public class Entity {
 
         spriteCounter++;
         if(spriteCounter>12){
-            if (idle){
-                // Idle
-                if(spriteNum < 6){
-                    spriteNum = 6;
+            if(attack) {
+                spriteNum++;
+                if(spriteNum > 13) {
+                    spriteNum = 0;
+                    attack = false;
                 }
+            } else {
+                if (idle) {
+                    // Idle
+                    if (spriteNum < 6) {
+                        spriteNum = 6;
+                    }
 
-                if(spriteNum < 9){
-                    spriteNum++;
+                    if (spriteNum < 9) {
+                        spriteNum++;
+                    } else {
+                        spriteNum = 6;
+                    }
                 } else {
-                    spriteNum = 6;
-                }
-            }else{
-                // Movement
-                if(spriteNum < 5){
-                    spriteNum++;
-                } else {
-                    spriteNum = 1;
+                    // Movement
+                    if (spriteNum < 5) {
+                        spriteNum++;
+                    } else {
+                        spriteNum = 0;
+                    }
                 }
             }
             spriteCounter = 0;
+        }
+
+        // Invincible counter
+        if(invincible) {
+            invincibleCounter++;
+            if(invincibleCounter > gp.FPS/4){
+                invincible = false;
+                invincibleCounter = 0;
+            }
         }
     }
 
@@ -142,18 +262,63 @@ public class Entity {
                 worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
                 worldY - gp.tileSize< gp.player.worldY + gp.player.screenY) {
 
-            BufferedImage image = switch (direction) {
-                case "up" -> up.get(spriteNum);
-                case "down" -> down.get(spriteNum);
-                case "right" -> right.get(spriteNum);
-                case "left" -> left.get(spriteNum);
-                default -> null;
-            };
+            // Object
+            if(up.isEmpty()) {
+                g2.drawImage(image, screenX+diffX, screenY+diffY, null);
+            } else {
+                // NPC and Monsters
+                BufferedImage image = switch (direction) {
+                    case "up" -> up.get(spriteNum);
+                    case "down" -> down.get(spriteNum);
+                    case "right" -> right.get(spriteNum);
+                    case "left" -> left.get(spriteNum);
+                    default -> null;
+                };
 
-            // Shadow has fixed dimesions
-            g2.drawImage(shadow, screenX+(spriteDim/2)+10, screenY+spriteDim+20, null);
-            g2.drawImage(image, screenX, screenY, null);
+                // Health bar for monsters
+                if(type == 2 && hpBarOn){
+                    double oneScale = (double) gp.tileSize/maxLife;
+                    double hpBarValue = oneScale*life;
+
+                    g2.setColor(gp.ui.backgroundColor);
+                    g2.fillRect(screenX-1+(gp.tileSize/2), screenY-16, gp.tileSize+2, 12);
+
+                    g2.setColor(new Color(162, 38, 51));
+                    g2.fillRect(screenX+(gp.tileSize/2), screenY-15, (int) hpBarValue, 10);
+
+                    hpBarCounter++;
+                    if(hpBarCounter > 10 * gp.FPS){
+                        hpBarOn = false;
+                        hpBarCounter = 0;
+                    }
+                }
+
+
+                // Invincible transparency
+                if(invincible && !dying) {
+                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3F));
+                }
+
+                if(hurt && !dying){
+                    hurtAnimation();
+                }
+
+                if(dying){
+                    dyingAnimation();
+                }
+
+                // Shadow has fixed dimensions
+                g2.drawImage(shadow, screenX+(spriteDim/2)+10, screenY+spriteDim+20, null);
+                g2.drawImage(image, screenX, screenY, null);
+
+                // Reset alpha
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
+            }
+
+
         }
 
     }
 }
+
+// TODO maybe bigger attack range?

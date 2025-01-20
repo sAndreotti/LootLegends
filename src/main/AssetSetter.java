@@ -1,7 +1,7 @@
 package main;
 
 import entity.NPC_OldMan;
-import object.*;
+import monster.MON_Rat;
 
 public class AssetSetter {
 
@@ -12,7 +12,8 @@ public class AssetSetter {
     }
 
     public void setObject() {
-        /*// Keys
+        /*
+        // Keys
         gp.obj[0] = new OBJ_Key(gp);
         gp.obj[0].worldX = 10*gp.tileSize;
         gp.obj[0].worldY = 5*gp.tileSize;
@@ -51,11 +52,21 @@ public class AssetSetter {
 
     }
 
-    public void setNpc(){
-
+    public void setNpc() {
         gp.npc[0] = new NPC_OldMan(gp);
         gp.npc[0].worldX = gp.tileSize*10;
         gp.npc[0].worldY = gp.tileSize*10;
+
+    }
+
+    public void setMonster() {
+        gp.monster[0] = new MON_Rat(gp);
+        gp.monster[0].worldX = gp.tileSize*11;
+        gp.monster[0].worldY = gp.tileSize*10;
+
+        //gp.monster[1] = new MON_Rat(gp);
+        //gp.monster[1].worldX = gp.tileSize*10;
+        //gp.monster[1].worldY = gp.tileSize*5;
     }
 
 }

@@ -1,15 +1,13 @@
 package object;
 
+import entity.Entity;
 import main.GamePanel;
 
-import javax.imageio.ImageIO;
-import java.io.IOException;
-import java.util.Objects;
-
-public class OBJ_Book extends SuperObject{
+public class OBJ_Book extends Entity {
 
     // Book makes player faster
     public OBJ_Book(GamePanel gp) {
+        super(gp);
 
         name = "Book";
         spriteDimX = 7;
@@ -21,12 +19,7 @@ public class OBJ_Book extends SuperObject{
         solidArea.x = spriteDimX;
         solidArea.y = spriteDimY;
 
-        try{
-            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/Bookshelf decor/15.png")));
-            image = uTool.scaleImage(image, spriteDimX*gp.scale, spriteDimY*gp.scale);
-        } catch (IOException e){
-            e.printStackTrace();
-        }
+        getOBJImage("/objects/Bookshelf decor/15.png");
     }
 
 }

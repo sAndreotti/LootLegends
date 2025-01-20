@@ -1,5 +1,6 @@
 package object;
 
+import entity.Entity;
 import main.GamePanel;
 
 import javax.imageio.ImageIO;
@@ -7,11 +8,13 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
-public class OBJ_Door extends SuperObject{
+public class OBJ_Door extends Entity {
 
     BufferedImage imageOpened;
 
     public OBJ_Door(GamePanel gp) {
+        super(gp);
+
         name = "Door";
         spriteDimX = 16;
         spriteDimY = 12;
@@ -31,7 +34,6 @@ public class OBJ_Door extends SuperObject{
         }
     }
 
-    @Override
     public void open() {
         spriteDimX = 7;
         spriteDimY = 24;

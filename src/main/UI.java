@@ -1,7 +1,7 @@
 package main;
 
+import entity.Entity;
 import object.OBJ_Heart;
-import object.SuperObject;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -33,8 +33,8 @@ public class UI {
     // Colors
     Color textColor = new Color(192, 203, 220);
     Color titleColor = new Color(254, 174, 52);
-    Color backgroundColor = new Color(24, 20, 37);
-    Color backgroundDialogueColor = new Color(0, 0, 0, 220);
+    public Color backgroundColor = new Color(24, 20, 37);
+    public Color backgroundDialogueColor = new Color(0, 0, 0, 220);
 
     public UI(GamePanel gp) {
         this.gp = gp;
@@ -61,7 +61,7 @@ public class UI {
         loadClasses();
 
         // Create HUD object
-        SuperObject heart = new OBJ_Heart(gp);
+        Entity heart = new OBJ_Heart(gp);
         heart_full = heart.image;
         heart_half = heart.image2;
         heart_blank = heart.image3;
@@ -101,34 +101,29 @@ public class UI {
         int i = 0;
 
         // Calculating how much bar display
-        int imgX = x-(gp.tileSize/3);
+        int imgX = 10*gp.scale;
         int nBars = (gp.player.maxLife/2)-2;
         g2.drawImage(heart_bar[0], imgX, y-(3*gp.scale), null);
-        for(int j=1; j<nBars; j++){
-            g2.drawImage(heart_bar[1], imgX+(gp.tileSize*(j)), y-(3*gp.scale), null);
+        for(int j=0; j<nBars; j++){
+            g2.drawImage(heart_bar[1], imgX+(gp.tileSize*(j+1)), y-(3*gp.scale), null);
         }
-        g2.drawImage(heart_bar[2], imgX+((nBars)*gp.tileSize), y-(3*gp.scale), null);
+        g2.drawImage(heart_bar[2], imgX+((nBars+1)*gp.tileSize), y-(3*gp.scale), null);
 
-        // Blank heart
-        while(i<gp.player.maxLife/2){
-            g2.drawImage(heart_blank, x, y, null);
-            i++;
-            x += gp.tileSize-8;
-        }
+        // Calculate ending heart
+        int endingX = imgX+((nBars+1)*gp.tileSize);
 
-        // Reset
-        x = gp.tileSize/2;
-        i = 0;
+
+        imgX += (3*gp.scale);
 
         // Draw current life
         while(i < gp.player.life){
-            g2.drawImage(heart_half, x, y, null);
+            g2.drawImage(heart_half, imgX, y, null);
             i++;
             if(i < gp.player.life) {
-                g2.drawImage(heart_full, x, y, null);
+                g2.drawImage(heart_full, imgX, y, null);
             }
             i++;
-            x += gp.tileSize-8;
+            imgX += gp.tileSize;
         }
 
     }
@@ -143,7 +138,7 @@ public class UI {
             try{
                 BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/gui/title/title.png")));
                 image = uTool.scaleImage(image, 194*gp.scale, 64*gp.scale);
-                g2.drawImage(image, gp.tileSize*2, gp.tileSize/4, null);
+                g2.drawImage(image, gp.screenWidth/2-((194*gp.scale)/2), gp.tileSize/4, null);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -163,7 +158,7 @@ public class UI {
 
             // Player image
             x = gp.screenWidth/2 - (gp.tileSize*2);
-            y += gp.tileSize*2;
+            y += gp.tileSize*3;
             g2.drawImage(gp.player.shadow, x+(gp.player.spriteDim)+30, y+(gp.player.spriteDim*3)+15,
                     gp.tileSize+(gp.tileSize/2), gp.tileSize-(gp.tileSize/2),null);
             g2.drawImage(archer, x, y, gp.tileSize*4, gp.tileSize*4, null);
@@ -174,7 +169,7 @@ public class UI {
 
             text = "New Game";
             x = getXforCenteredText(text);
-            y += gp.tileSize*4;
+            y += gp.tileSize*5;
             g2.drawString(text, x, y);
             if(commandNum == 0) {
                 g2.drawImage(selector, x-gp.tileSize, y-(10*gp.scale), null);
@@ -215,7 +210,7 @@ public class UI {
             g2.drawString(text, x, y);
 
             int imgX = gp.screenWidth/2-(gp.tileSize*2);
-            int imgY = y+gp.tileSize;
+            int imgY = y+gp.tileSize*3;
             // Draw the shadow
             if(commandNum!=3) {
                 g2.drawImage(gp.player.shadow, imgX + (gp.player.spriteDim/2)+gp.tileSize-3, imgY +(gp.tileSize*2) + (gp.tileSize/3),
@@ -224,7 +219,7 @@ public class UI {
 
             text = "Archer";
             x = getXforCenteredText(text);
-            y += gp.tileSize*5;
+            y += gp.tileSize*8;
             g2.drawString(text, x, y);
             if(commandNum == 0) {
                 g2.drawImage(archer, imgX, imgY,gp.tileSize*4, gp.tileSize*4, null);

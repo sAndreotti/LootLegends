@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 public class KeyHandler implements KeyListener {
 
     public boolean upPressed, downPressed, leftPressed, rightPressed;
-    public boolean enterPressed;
+    public boolean enterPressed, jPressed;
     GamePanel gp;
 
     // Debug
@@ -49,6 +49,11 @@ public class KeyHandler implements KeyListener {
                         System.exit(0);
                     }
                 }
+
+                if(code == KeyEvent.VK_ESCAPE) {
+                    System.exit(0);
+                }
+
             } else if(gp.ui.titleScreenState == 1) {
                 if (code == KeyEvent.VK_W) {
                     gp.ui.commandNum--;
@@ -69,12 +74,19 @@ public class KeyHandler implements KeyListener {
                         gp.playMusic(0);
                     }
                 }
+                if(code == KeyEvent.VK_ESCAPE) {
+                    gp.ui.titleScreenState=0;
+                }
             }
 
         }
 
         // Play
         if(gp.gameState == gp.playState) {
+            if(code == KeyEvent.VK_J){
+                jPressed = true;
+            }
+
             if (code == KeyEvent.VK_W) {
                 upPressed = true;
             } else if (code == KeyEvent.VK_A) {
@@ -88,14 +100,17 @@ public class KeyHandler implements KeyListener {
             if(code == KeyEvent.VK_ENTER) {
                 enterPressed = true;
             }
+
+            if(code == KeyEvent.VK_ESCAPE) {
+                gp.gameState = gp.pauseState;
+                gp.stopMusic();
+                return;
+            }
         }
 
         // Pause
-        if(code == KeyEvent.VK_ESCAPE) {
-            if(gp.gameState == gp.playState){
-                gp.gameState = gp.pauseState;
-                gp.stopMusic();
-            }else{
+        if(gp.gameState == gp.pauseState){
+            if(code == KeyEvent.VK_ESCAPE) {
                 gp.gameState = gp.playState;
                 gp.playMusic(0);
             }

@@ -23,34 +23,37 @@ public class UtilityTool {
         try {
             BufferedImage playerSprite = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(spriteLocation)));
 
-            if(reverse) {
-                int width = playerSprite.getWidth();
-                int height = playerSprite.getHeight();
-
-                // Create a temporary array to hold one row of pixels
-                int[] rowPixels = new int[width];
-
-                // Iterate over each row
-                for (int y = 0; y < height; y++) {
-                    // Get the pixel data for the current row
-                    playerSprite.getRGB(0, y, width, 1, rowPixels, 0, width);
-
-                    // Reverse the row (flip horizontally)
-                    for (int x = 0; x < width / 2; x++) {
-                        int temp = rowPixels[x];
-                        rowPixels[x] = rowPixels[width - 1 - x];
-                        rowPixels[width - 1 - x] = temp;
-                    }
-
-                    // Write the flipped row back to the image
-                    playerSprite.setRGB(0, y, width, 1, rowPixels, 0, width);
-                }
-            }
-
             for (int i=0; i<size; i++){
                 BufferedImage img = playerSprite.getSubimage(32*i, 0, spriteDim, spriteDim);
+
+                // Reverse for right moves
+                if(reverse) {
+                    int width = img.getWidth();
+                    int height = img.getHeight();
+
+                    // Create a temporary array to hold one row of pixels
+                    int[] rowPixels = new int[width];
+
+                    // Iterate over each row
+                    for (int y = 0; y < height; y++) {
+                        // Get the pixel data for the current row
+                        img.getRGB(0, y, width, 1, rowPixels, 0, width);
+
+                        // Reverse the row (flip horizontally)
+                        for (int x = 0; x < width / 2; x++) {
+                            int temp = rowPixels[x];
+                            rowPixels[x] = rowPixels[width - 1 - x];
+                            rowPixels[width - 1 - x] = temp;
+                        }
+
+                        // Write the flipped row back to the image
+                        img.setRGB(0, y, width, 1, rowPixels, 0, width);
+                    }
+                }
+
                 arr.add(scaleImage(img,spriteDim*scale, spriteDim*scale));
             }
+
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -11,6 +11,8 @@ public class Player extends Entity {
     KeyHandler keyH;
     boolean idle = true;
     public int character = 1;
+    boolean attacking = false;
+    int attackRange = 5*gp.scale;
 
     public final int screenX;
     public final int screenY;
@@ -30,9 +32,14 @@ public class Player extends Entity {
         System.out.println(" ");
 
         // Collision
-        solidArea = new Rectangle(30, 30, 35, 35);
+        solidArea = new Rectangle(10*gp.scale, 10*gp.scale, 12*gp.scale, 12*gp.scale);
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
+
+        // Attack area
+        attackArea.width = gp.tileSize+attackRange;
+        attackArea.height = gp.tileSize+attackRange;
+
     }
 
     public void setDefaultValues() {
@@ -43,7 +50,7 @@ public class Player extends Entity {
         direction = "right";
 
         // Player status
-        maxLife = 20;
+        maxLife = 6;
         life = maxLife;
     }
 
@@ -61,73 +68,157 @@ public class Player extends Entity {
     }
 
     public void update() {
-        if(keyH.upPressed){
-            direction = "up";
-            idle = false;
-        }else if(keyH.downPressed){
-            direction = "down";
-            idle = false;
-        }else if(keyH.leftPressed){
-            direction = "left";
-            idle = false;
-        }else if(keyH.rightPressed){
-            direction = "right";
-            idle = false;
-        }else {
-            idle = true;
+        // Attack
+        if(keyH.jPressed){
+            attacking = true;
+            gp.playSE(7);
+            gp.keyH.jPressed = false;
+            spriteNum = 10;
         }
 
-        // Collision
-        collisionOn = false;
-        gp.cChecker.checkTile(this);
+        if(attacking){
+            attacking();
+        }else{
+            if(keyH.upPressed){
+                direction = "up";
+                idle = false;
+            }else if(keyH.downPressed){
+                direction = "down";
+                idle = false;
+            }else if(keyH.leftPressed){
+                direction = "left";
+                idle = false;
+            }else if(keyH.rightPressed){
+                direction = "right";
+                idle = false;
+            }else {
+                idle = true;
+            }
 
-        // Check object collision
-        int objIndex = gp.cChecker.checkObject(this, true);
-        pickUpObject(objIndex);
+            // Collision
+            collisionOn = false;
+            gp.cChecker.checkTile(this);
 
-        // Check NPC collision
-        int npcIndex = gp.cChecker.checkEntity(this, gp.npc);
-        interactNPC(npcIndex);
+            // Check object collision
+            int objIndex = gp.cChecker.checkObject(this, true);
+            pickUpObject(objIndex);
 
-        // Check event
-        gp.eHandler.checkEvent();
+            // Check NPC collision
+            int npcIndex = gp.cChecker.checkEntity(this, gp.npc);
+            interactNPC(npcIndex);
 
-        gp.keyH.enterPressed = false;
+            // Check Monster collision
+            int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
+            contactMonster(monsterIndex);
 
-        // Moving
-        if(!collisionOn && !idle) {
-            switch (direction) {
-                case "up" -> worldY -= speed;
-                case "down" -> worldY += speed;
-                case "left" -> worldX -= speed;
-                case "right" -> worldX += speed;
+            // Check event
+            gp.eHandler.checkEvent();
+
+            gp.keyH.enterPressed = false;
+
+            // Moving
+            if(!collisionOn && !idle) {
+                switch (direction) {
+                    case "up" -> worldY -= speed;
+                    case "down" -> worldY += speed;
+                    case "left" -> worldX -= speed;
+                    case "right" -> worldX += speed;
+                }
+            }
+
+            spriteCounter++;
+            if(spriteCounter>12){
+                if (idle){
+                    // Idle
+                    if(spriteNum < 6){
+                        spriteNum = 6;
+                    }
+
+                    if(spriteNum < 9){
+                        spriteNum++;
+                    } else {
+                        spriteNum = 6;
+                    }
+                }else{
+                    // Movement
+                    if(spriteNum < 5){
+                        spriteNum++;
+                    } else {
+                        spriteNum = 1;
+                    }
+                }
+                spriteCounter = 0;
+            }
+
+            // Invincible counter
+            if(invincible) {
+                invincibleCounter++;
+                if(invincibleCounter > gp.FPS*2){
+                    invincible = false;
+                    invincibleCounter = 0;
+                }
             }
         }
 
+    }
+
+    public void attacking() {
         spriteCounter++;
-        if(spriteCounter>12){
-            if (idle){
-                // Idle
-                if(spriteNum < 6){
-                    spriteNum = 6;
+        if(spriteCounter>8){
+            // Sprite Attack
+            if(spriteNum < 13){
+                spriteNum++;
+            } else {
+                // Check if hit something
+                int currentWorldX = worldX;
+                int currentWorldY = worldY;
+                int solidAreaWidth = solidArea.width;
+                int solidAreaHeight = solidArea.height;
+
+                switch (direction){
+                    case "up": worldY -= attackArea.height;
+                    case "down": worldY += attackArea.height;
+                    case "left": worldX -= attackArea.width;
+                    case "right": worldX += attackArea.width;
                 }
 
-                if(spriteNum < 9){
-                    spriteNum++;
-                } else {
-                    spriteNum = 6;
-                }
-            }else{
-                // Movement
-                if(spriteNum < 5){
-                    spriteNum++;
-                } else {
-                    spriteNum = 1;
-                }
+                solidArea.width = attackArea.width;
+                solidArea.height = attackArea.height;
+
+                int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
+                damageMonster(monsterIndex);
+
+                worldX = currentWorldX;
+                worldY = currentWorldY;
+                solidArea.width = solidAreaWidth;
+                solidArea.height = solidAreaHeight;
+
+                // End attack
+                idle = true;
+                spriteCounter = 0;
+                attacking = false;
+                return;
             }
             spriteCounter = 0;
         }
+    }
 
+    public void damageMonster(int i){
+        if(i != -1) {
+            if(!gp.monster[i].invincible){
+                gp.playSE(5);
+                gp.monster[i].life--;
+                gp.monster[i].invincible = true;
+                gp.monster[i].damageReaction();
+                gp.monster[i].spriteNum = 22;
+                gp.monster[i].hurt = true;
+
+                if(gp.monster[i].life <= 0){
+                    gp.monster[i].dying = true;
+                    gp.monster[i].spriteNum = 14;
+                }
+            }
+        }
     }
 
     public void pickUpObject(int i) {
@@ -146,6 +237,19 @@ public class Player extends Entity {
     public void speak(){
         // For specific iterations
         super.speak();
+    }
+
+    public void contactMonster(int i) {
+        if(i!= -1){
+            if(!invincible){
+                gp.playSE(6);
+                gp.monster[i].attack();
+                life--;
+                gp.player.spriteNum = 22;
+                gp.player.hurt = true;
+                invincible = true;
+            }
+        }
 
     }
 
@@ -158,8 +262,28 @@ public class Player extends Entity {
             default -> null;
         };
 
+        if(hurt){
+            hpBarOn = true;
+            hpBarCounter = 0;
+            super.hurtAnimation();
+        }
+
+        if(dying){
+            super.dyingAnimation();
+        }
+
+        // Invincible transparency
+        if(invincible && invincibleCounter%5==0) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3F));
+        }
+
         // Shadow has fixed dimesions
         g2.drawImage(shadow, screenX+(spriteDim/2)+10, screenY+spriteDim+20, null);
         g2.drawImage(image, screenX, screenY, null);
+
+        // Reset alpha
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
+
+
     }
 }

@@ -16,7 +16,8 @@ public class NPC_OldMan extends Entity{
         speed = 1;
 
         //35, 40, 25, 25
-        solidArea = new Rectangle(35, 7, 25, 64);
+        //35, 7, 25, 64
+        solidArea = new Rectangle(12*gp.scale, 13*gp.scale, 9*gp.scale, 9*gp.scale);
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 

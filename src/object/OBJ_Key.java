@@ -1,14 +1,12 @@
 package object;
 
+import entity.Entity;
 import main.GamePanel;
 
-import javax.imageio.ImageIO;
-import java.io.IOException;
-import java.util.Objects;
-
-public class OBJ_Key extends SuperObject{
+public class OBJ_Key extends Entity {
 
     public OBJ_Key(GamePanel gp) {
+        super(gp);
 
         name = "Key";
         spriteDimX = 8;
@@ -20,12 +18,7 @@ public class OBJ_Key extends SuperObject{
         solidArea.x = spriteDimX;
         solidArea.y = spriteDimY;
 
-        try{
-            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/Other/15.png")));
-            image = uTool.scaleImage(image, spriteDimX*gp.scale, spriteDimY*gp.scale);
-        } catch (IOException e){
-            e.printStackTrace();
-        }
+        getOBJImage("/objects/Other/15.png");
     }
 
 }
