@@ -35,6 +35,7 @@ public class TileManager {
 
         int counter = 0;
         try {
+            System.out.println(spritePath);
             // leggo png, e creo le tile
             BufferedImage tiles = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(spritePath)));
             int width = tiles.getWidth();
