@@ -160,12 +160,10 @@ public class Entity {
             spriteNum = 0;
             hurt = false;
             invincible = true;
-            System.out.println("End animation");
         } else if(life <= 0) {
             // Dying
             dying = true;
             hurt = false;
-            System.out.println("End animation");
         }
     }
 
@@ -320,5 +318,3 @@ public class Entity {
 
     }
 }
-
-// TODO maybe bigger attack range?

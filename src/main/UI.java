@@ -96,7 +96,6 @@ public class UI {
 
 
     public void drawPlayerLife() {
-        int x = gp.tileSize/2;
         int y = gp.tileSize/2;
         int i = 0;
 
@@ -108,10 +107,6 @@ public class UI {
             g2.drawImage(heart_bar[1], imgX+(gp.tileSize*(j+1)), y-(3*gp.scale), null);
         }
         g2.drawImage(heart_bar[2], imgX+((nBars+1)*gp.tileSize), y-(3*gp.scale), null);
-
-        // Calculate ending heart
-        int endingX = imgX+((nBars+1)*gp.tileSize);
-
 
         imgX += (3*gp.scale);
 

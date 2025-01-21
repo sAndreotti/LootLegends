@@ -12,7 +12,7 @@ public class Player extends Entity {
     boolean idle = true;
     public int character = 1;
     boolean attacking = false;
-    int attackRange = 5*gp.scale;
+    int attackRange = 2*gp.scale;
 
     public final int screenX;
     public final int screenY;
@@ -71,7 +71,7 @@ public class Player extends Entity {
         // Attack
         if(keyH.jPressed){
             attacking = true;
-            gp.playSE(7);
+            //gp.playSE(7);
             gp.keyH.jPressed = false;
             spriteNum = 10;
         }
@@ -206,16 +206,29 @@ public class Player extends Entity {
     public void damageMonster(int i){
         if(i != -1) {
             if(!gp.monster[i].invincible){
-                gp.playSE(5);
+                //gp.playSE(5);
+                // Monster damaged
                 gp.monster[i].life--;
                 gp.monster[i].invincible = true;
-                gp.monster[i].damageReaction();
-                gp.monster[i].spriteNum = 22;
-                gp.monster[i].hurt = true;
 
+                // React to damage
+                gp.monster[i].damageReaction();
+
+                // Hurted sprite
+                gp.monster[i].hurt = true;
+                gp.monster[i].spriteNum = 22;
+                gp.monster[i].spriteCounter = 0;
+
+                // HP bar show
+                gp.monster[i].hpBarOn = true;
+                gp.monster[i].hpBarCounter = 0;
+
+                // If it dies
                 if(gp.monster[i].life <= 0){
                     gp.monster[i].dying = true;
+                    gp.monster[i].hurt = false;
                     gp.monster[i].spriteNum = 14;
+                    gp.monster[i].hpBarOn = false;
                 }
             }
         }
@@ -242,12 +255,19 @@ public class Player extends Entity {
     public void contactMonster(int i) {
         if(i!= -1){
             if(!invincible){
-                gp.playSE(6);
+                //gp.playSE(6);
                 gp.monster[i].attack();
                 life--;
                 gp.player.spriteNum = 22;
+                gp.player.spriteCounter = 0;
                 gp.player.hurt = true;
                 invincible = true;
+
+                if(gp.player.life <= 0){
+                    gp.player.dying = true;
+                    gp.player.hurt = false;
+                    gp.player.spriteNum = 14;
+                }
             }
         }
 
@@ -265,11 +285,17 @@ public class Player extends Entity {
         if(hurt){
             hpBarOn = true;
             hpBarCounter = 0;
+            System.out.println(hpBarOn);
             super.hurtAnimation();
         }
 
         if(dying){
             super.dyingAnimation();
+        }
+
+        if(!alive) {
+            gp.gameState = gp.pauseState;
+            return;
         }
 
         // Invincible transparency
