@@ -5,13 +5,13 @@ import main.GamePanel;
 
 import java.util.Random;
 
-public class MON_Rat extends Entity {
+public class MON_Goblin extends Entity {
 
-    public MON_Rat(GamePanel gp) {
+    public MON_Goblin(GamePanel gp) {
         super(gp);
         this.gp = gp;
 
-        name = "Rat";
+        name = "Goblin";
         speed = 1;
         maxLife = 4;
         life = maxLife;
@@ -27,13 +27,13 @@ public class MON_Rat extends Entity {
 
         solidArea.x = 8*gp.scale;
         solidArea.y = 8*gp.scale;
-        solidArea.width = 14*gp.scale;
-        solidArea.height = 14*gp.scale;
+        solidArea.width = 16*gp.scale;
+        solidArea.height = 16*gp.scale;
 
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 
-        getImage("enemies", 1);
+        getImage("enemies", 2);
     }
 
     public void setAction() {

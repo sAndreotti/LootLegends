@@ -47,7 +47,7 @@ public class Entity {
 
     // Atttack
     public Rectangle attackArea = new Rectangle(0, 0, 0, 0);
-    public boolean attack;
+    public boolean attacking;
 
     // Character status
     public int maxLife;
@@ -55,6 +55,23 @@ public class Entity {
     public boolean hurt = false;
     public boolean hpBarOn = false;
     public int hpBarCounter = 0;
+
+    // Stats
+    public int level;
+    public int strenght;
+    public int dexterity;
+    public int attack;
+    public int defense;
+    public int exp;
+    public int nextLevelExp;
+    public int coin;
+
+    public Entity currentWeapon;
+    public Entity currentShield;
+
+    // Item attributes
+    public int attackValue;
+    public int defenseValue;
 
     // Dying
     public boolean alive = true;
@@ -139,9 +156,10 @@ public class Entity {
     }
 
     public void hurtAnimation() {
-        System.out.println("Hurt animation");
         spriteCounter++;
-        if(spriteCounter>10){
+        if(spriteCounter>50){
+            System.out.println("SpriteCounter: " + spriteCounter);
+            System.out.println("SpriteNum: " + spriteNum);
             // Sprite Attack
             if(spriteNum < 23){
                 spriteNum++;
@@ -207,37 +225,40 @@ public class Entity {
                 case "right" -> worldX += speed;
             }
         }
-
-        spriteCounter++;
-        if(spriteCounter>12){
-            if(attack) {
-                spriteNum++;
-                if(spriteNum > 13) {
-                    spriteNum = 0;
-                    attack = false;
-                }
-            } else {
-                if (idle) {
-                    // Idle
-                    if (spriteNum < 6) {
-                        spriteNum = 6;
-                    }
-
-                    if (spriteNum < 9) {
-                        spriteNum++;
-                    } else {
-                        spriteNum = 6;
+        
+        // If it is hurting i don't want upadte the sprite
+        if(!hurt){
+            spriteCounter++;
+            if(spriteCounter>12){
+                if(attacking) {
+                    spriteNum++;
+                    if(spriteNum > 13) {
+                        spriteNum = 0;
+                        attacking = false;
                     }
                 } else {
-                    // Movement
-                    if (spriteNum < 5) {
-                        spriteNum++;
+                    if (idle) {
+                        // Idle
+                        if (spriteNum < 6) {
+                            spriteNum = 6;
+                        }
+
+                        if (spriteNum < 9) {
+                            spriteNum++;
+                        } else {
+                            spriteNum = 6;
+                        }
                     } else {
-                        spriteNum = 0;
+                        // Movement
+                        if (spriteNum < 5) {
+                            spriteNum++;
+                        } else {
+                            spriteNum = 0;
+                        }
                     }
                 }
-            }
             spriteCounter = 0;
+            }
         }
 
         // Invincible counter

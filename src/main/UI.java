@@ -91,9 +91,11 @@ public class UI {
            // Dialogue
            drawPlayerLife();
            drawDialogueScreen();
+       } else if(gp.gameState == gp.characterState) {
+            // Stats screen
+            drawCharacterScreen();
        }
     }
-
 
     public void drawPlayerLife() {
         int y = gp.tileSize/2;
@@ -279,6 +281,81 @@ public class UI {
 
     }
 
+    public void drawCharacterScreen() {
+        // Create a Frame
+        final int frameX = gp.tileSize*2;
+        final int frameY = gp.tileSize;
+        final int frameWidth = gp.tileSize*6;
+        final int frameHeight = gp.tileSize*10;
+        drawSubWindow(frameX, frameY, frameWidth, frameHeight);
+
+        // Text
+        g2.setColor(textColor);
+        g2.setFont(vt323.deriveFont( 32F));
+
+        int textX = frameX + gp.tileSize/2;
+        int textY = frameY + gp.tileSize;
+        final int lineHeight = 35;
+
+        // Parameters
+        g2.drawString("Level " , textX, textY);
+        textY += lineHeight;
+        g2.drawString("Life " , textX, textY);
+        textY += lineHeight;
+        g2.drawString("Strenght " , textX, textY);
+        textY += lineHeight;
+        g2.drawString("Dexterity " , textX, textY);
+        textY += lineHeight;
+        g2.drawString("Attack " , textX, textY);
+        textY += lineHeight;
+        g2.drawString("Defense " , textX, textY);
+        textY += lineHeight;
+        g2.drawString("Exp " , textX, textY);
+        textY += lineHeight;
+        g2.drawString("Next Level " , textX, textY);
+        textY += lineHeight;
+        g2.drawString("Coin " , textX, textY);
+        textY += lineHeight+(lineHeight/2);
+        g2.drawString("Weapon " , textX, textY);
+        textY += lineHeight;
+        g2.drawString("Shield " , textX, textY);
+
+        // Values
+        int tailX = (frameX + frameWidth) - gp.tileSize;
+        // Reset text Y
+        textY = frameY + gp.tileSize;
+        
+        drawValues(String.valueOf(gp.player.level), tailX, textY, textX);
+        textY += lineHeight;
+        drawValues(String.valueOf(gp.player.life)+"/"+String.valueOf(gp.player.maxLife), tailX, textY, textX);
+        textY += lineHeight;
+        drawValues(String.valueOf(gp.player.strenght), tailX, textY, textX);
+        textY += lineHeight;
+        drawValues(String.valueOf(gp.player.dexterity), tailX, textY, textX);
+        textY += lineHeight;
+        drawValues(String.valueOf(gp.player.attack), tailX, textY, textX);
+        textY += lineHeight;
+        drawValues(String.valueOf(gp.player.defense), tailX, textY, textX);
+        textY += lineHeight;
+        drawValues(String.valueOf(gp.player.exp), tailX, textY, textX);
+        textY += lineHeight;
+        drawValues(String.valueOf(gp.player.nextLevelExp), tailX, textY, textX);
+        textY += lineHeight;
+        drawValues(String.valueOf(gp.player.coin), tailX, textY, textX);
+        textY += lineHeight+(7*gp.scale);
+
+        // Images for weapon and shield
+        g2.drawImage(gp.player.currentWeapon.image, tailX-(gp.tileSize/2), textY-(gp.tileSize/2), gp.tileSize/2, gp.tileSize/2, null);
+        textY += lineHeight;
+        g2.drawImage(gp.player.currentShield.image, tailX-(gp.tileSize/2), textY-(gp.tileSize/2), gp.tileSize/2, gp.tileSize/2, null);
+    
+    }
+
+    public void drawValues(String value, int tailX, int textY, int textX) {
+        textX = getXforAlignToRight(value, tailX);
+        g2.drawString(value, textX, textY);
+    }
+
     public void drawSubWindow(int x, int y, int width, int height) {
         g2.setColor(backgroundDialogueColor);
         g2.fillRoundRect(x, y, width, height, 35, 35);
@@ -326,6 +403,11 @@ public class UI {
     public int getXforCenteredText(String text) {
         int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
         return gp.screenWidth/2 - length/2;
+    }
+
+    public int getXforAlignToRight(String text, int tailX) {
+        int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+        return tailX - length;
     }
 
 }

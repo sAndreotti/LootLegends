@@ -1,6 +1,7 @@
 package main;
 
 import entity.NPC_OldMan;
+import monster.MON_Goblin;
 import monster.MON_Rat;
 
 public class AssetSetter {
@@ -54,19 +55,21 @@ public class AssetSetter {
 
     public void setNpc() {
         gp.npc[0] = new NPC_OldMan(gp);
-        gp.npc[0].worldX = gp.tileSize*10;
-        gp.npc[0].worldY = gp.tileSize*10;
+        gp.npc[0].worldX = gp.tileSize*3;
+        gp.npc[0].worldY = gp.tileSize*7;
+        gp.npc[0].direction = "right";
 
     }
 
     public void setMonster() {
         gp.monster[0] = new MON_Rat(gp);
-        gp.monster[0].worldX = gp.tileSize*11;
+        gp.monster[0].worldX = gp.tileSize*17;
         gp.monster[0].worldY = gp.tileSize*10;
+        gp.monster[0].direction = "right";
 
-        //gp.monster[1] = new MON_Rat(gp);
-        //gp.monster[1].worldX = gp.tileSize*10;
-        //gp.monster[1].worldY = gp.tileSize*5;
+        gp.monster[1] = new MON_Goblin(gp);
+        gp.monster[1].worldX = gp.tileSize*17;
+        gp.monster[1].worldY = gp.tileSize*5;
     }
 
 }

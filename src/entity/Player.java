@@ -2,6 +2,8 @@ package entity;
 
 import main.GamePanel;
 import main.KeyHandler;
+import object.OBJ_Sword_Normal;
+import object.OBJ_Shield_Wood;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -11,7 +13,6 @@ public class Player extends Entity {
     KeyHandler keyH;
     boolean idle = true;
     public int character = 1;
-    boolean attacking = false;
     int attackRange = 2*gp.scale;
 
     public final int screenX;
@@ -39,6 +40,7 @@ public class Player extends Entity {
         // Attack area
         attackArea.width = gp.tileSize+attackRange;
         attackArea.height = gp.tileSize+attackRange;
+        attacking = false;
 
     }
 
@@ -52,6 +54,20 @@ public class Player extends Entity {
         // Player status
         maxLife = 6;
         life = maxLife;
+
+        // Player stats
+        level = 1;
+        strenght = 1;
+        dexterity = 1;
+        exp = 0;
+        nextLevelExp = 5;
+        coin = 0;
+
+        // Default weapons
+        currentWeapon = new OBJ_Sword_Normal(gp);
+        currentShield = new OBJ_Shield_Wood(gp);
+        attack = getAttack();
+        defense = getDefense();
     }
 
     public void updateSprite(int i){
@@ -203,6 +219,25 @@ public class Player extends Entity {
         }
     }
 
+    public void pickUpObject(int i) {
+        if(i != -1){
+
+        }
+    }
+
+    public void interactNPC(int i) {
+        if(i != -1 && gp.keyH.enterPressed) {
+            gp.gameState = gp.dialogueState;
+            gp.npc[i].speak();
+        }
+    }
+
+    public void speak(){
+        // For specific iterations
+        super.speak();
+    }
+
+    // Player attack monster
     public void damageMonster(int i){
         if(i != -1) {
             if(!gp.monster[i].invincible){
@@ -234,24 +269,7 @@ public class Player extends Entity {
         }
     }
 
-    public void pickUpObject(int i) {
-        if(i != -1){
-
-        }
-    }
-
-    public void interactNPC(int i) {
-        if(i != -1 && gp.keyH.enterPressed) {
-            gp.gameState = gp.dialogueState;
-            gp.npc[i].speak();
-        }
-    }
-
-    public void speak(){
-        // For specific iterations
-        super.speak();
-    }
-
+    // Player got in contact with monster
     public void contactMonster(int i) {
         if(i!= -1){
             if(!invincible){
@@ -273,6 +291,15 @@ public class Player extends Entity {
 
     }
 
+    public int getAttack() {
+        return strenght + currentWeapon.attackValue;
+    }
+
+    public int getDefense() {
+        return dexterity + currentShield.defenseValue;
+    }
+    
+
     public void draw(Graphics2D g2) {
         BufferedImage image = switch (direction) {
             case "up" -> up.get(spriteNum);
@@ -285,7 +312,6 @@ public class Player extends Entity {
         if(hurt){
             hpBarOn = true;
             hpBarCounter = 0;
-            System.out.println(hpBarOn);
             super.hurtAnimation();
         }
 
@@ -312,4 +338,5 @@ public class Player extends Entity {
 
 
     }
+
 }
