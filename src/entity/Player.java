@@ -243,28 +243,60 @@ public class Player extends Entity {
             if(!gp.monster[i].invincible){
                 //gp.playSE(5);
                 // Monster damaged
-                gp.monster[i].life--;
-                gp.monster[i].invincible = true;
+                int damage = attack - gp.monster[i].defense;
+                if(damage > 0){
+                    gp.ui.addMessage("Player attacked the monster for "+damage+" damage.");
+                    gp.monster[i].life -= damage;
+                    gp.monster[i].invincible = true;
 
-                // React to damage
-                gp.monster[i].damageReaction();
+                    // React to damage
+                    gp.monster[i].damageReaction();
 
-                // Hurted sprite
-                gp.monster[i].hurt = true;
-                gp.monster[i].spriteNum = 22;
-                gp.monster[i].spriteCounter = 0;
+                    // Hurted sprite
+                    gp.monster[i].hurt = true;
+                    gp.monster[i].spriteNum = 22;
+                    gp.monster[i].spriteCounter = 0;
 
-                // HP bar show
-                gp.monster[i].hpBarOn = true;
-                gp.monster[i].hpBarCounter = 0;
-
+                    // HP bar show
+                    gp.monster[i].hpBarOn = true;
+                    gp.monster[i].hpBarCounter = 0;
+                }
+                
                 // If it dies
                 if(gp.monster[i].life <= 0){
+                    // Kill monster
+                    gp.ui.addMessage("Player defeated the monster "+gp.monster[i].name+".");
                     gp.monster[i].dying = true;
-                    gp.monster[i].hurt = false;
                     gp.monster[i].spriteNum = 14;
+
+                    // Reset hurting 
+                    gp.monster[i].hurt = false;
                     gp.monster[i].hpBarOn = false;
+
+                    // Gain exp
+                    gp.ui.addMessage("Player gained "+gp.monster[i].exp+" exp.");
+                    exp += gp.monster[i].exp;
+                    checkLevelUp();
                 }
+            }
+        }
+    }
+
+    public void checkLevelUp() {
+        if(exp >= nextLevelExp){
+            level++;
+            exp = exp - nextLevelExp;
+            nextLevelExp = level*5;
+            maxLife += 2;
+            life = maxLife;
+            strenght++;
+            dexterity++;
+            attack = getAttack();
+            defense = getDefense();
+            if(exp >= nextLevelExp){
+                checkLevelUp();
+            } else {
+                gp.ui.addMessage("Player leveled up to "+level+".");
             }
         }
     }
@@ -274,12 +306,17 @@ public class Player extends Entity {
         if(i!= -1){
             if(!invincible){
                 //gp.playSE(6);
-                gp.monster[i].attack();
-                life--;
-                gp.player.spriteNum = 22;
-                gp.player.spriteCounter = 0;
-                gp.player.hurt = true;
-                invincible = true;
+                // Calculate damage
+                int damage = gp.monster[i].attack - defense;
+                if(damage > 0){
+                    life -= damage;
+
+                    gp.monster[i].attack();
+                    gp.player.spriteNum = 22;
+                    gp.player.spriteCounter = 0;
+                    gp.player.hurt = true;
+                    invincible = true;
+                }
 
                 if(gp.player.life <= 0){
                     gp.player.dying = true;

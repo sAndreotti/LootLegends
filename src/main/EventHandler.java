@@ -83,6 +83,7 @@ public class EventHandler {
             gp.gameState = gameState;
             gp.ui.currentDialogue = "You are healed!\nYour life has been recovered";
             gp.player.life = gp.player.maxLife;
+            gp.aSetter.setMonster();
         }
     }
 

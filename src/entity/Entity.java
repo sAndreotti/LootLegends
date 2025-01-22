@@ -158,8 +158,6 @@ public class Entity {
     public void hurtAnimation() {
         spriteCounter++;
         if(spriteCounter>50){
-            System.out.println("SpriteCounter: " + spriteCounter);
-            System.out.println("SpriteNum: " + spriteNum);
             // Sprite Attack
             if(spriteNum < 23){
                 spriteNum++;
@@ -209,10 +207,18 @@ public class Entity {
         gp.cChecker.checkEntity(this, gp.monster);
         boolean contactPlayer = gp.cChecker.checkPlayer(this);
 
+        // If it is a monster and it is in contact with the player
         if(this.type == 2 && contactPlayer) {
             if(!gp.player.invincible) {
                 gp.playSE(6);
-                gp.player.contactMonster(0);
+                int damage = attack - gp.player.defense;
+                if(damage < 0){
+                    damage = 0;
+                } else {
+                    // If no damage no invincible
+                    gp.player.invincible = true;
+                }
+                gp.player.life -= damage;
             }
         }
 

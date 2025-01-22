@@ -18,6 +18,11 @@ public class MON_Rat extends Entity {
         type = 2;
         attacking = false;
 
+        // Set stats
+        attack = 2;
+        defense = 1;
+        exp = 100;
+
         /*
         solidArea.x = 10*gp.scale;
         solidArea.y = 10*gp.scale;

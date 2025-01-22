@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class UI {
@@ -23,6 +24,10 @@ public class UI {
     // Player status
     public BufferedImage[] heart_bar = new BufferedImage[3];
     public BufferedImage heart_full, heart_half, heart_blank;
+
+    // Messages
+    ArrayList<String> message = new ArrayList<>();
+    ArrayList<Integer> messageCounter = new ArrayList<>();
 
     // Class selection
     public int titleScreenState = 0;
@@ -83,6 +88,7 @@ public class UI {
        } else if(gp.gameState == gp.playState) {
            // Play
            drawPlayerLife();
+           drawMessage();
        } else if(gp.gameState == gp.pauseState) {
            // Pause
            drawPlayerLife();
@@ -95,6 +101,34 @@ public class UI {
             // Stats screen
             drawCharacterScreen();
        }
+    }
+
+    public void addMessage(String text) {
+        message.add(text);
+        messageCounter.add(0);
+    }
+
+    public void drawMessage() {
+        int messageX = gp.tileSize;
+        int messageY = (gp.maxScreenRow-1)*gp.tileSize;
+
+        g2.setFont(vt323.deriveFont(Font.BOLD, 20F));
+        for(int i=message.size()-1; i>=0; i--) {
+            if(message.get(i) != null){
+                g2.setColor(backgroundColor);
+                g2.drawString(message.get(i), messageX+2, messageY+2);
+                g2.setColor(textColor);
+                g2.drawString(message.get(i), messageX, messageY);
+                messageY -= gp.tileSize/2;
+                messageCounter.set(i, messageCounter.get(i)+1);
+                if(messageCounter.get(i) == gp.FPS*3) {
+                    message.remove(i);
+                    messageCounter.remove(i);
+                }
+            }
+            
+        }
+
     }
 
     public void drawPlayerLife() {
