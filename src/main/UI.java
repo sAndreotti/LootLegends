@@ -137,15 +137,30 @@ public class UI {
 
         // Calculating how much bar display
         int imgX = 10*gp.scale;
+        int resetX = imgX;
         int nBars = (gp.player.maxLife/2)-2;
         g2.drawImage(heart_bar[0], imgX, y-(3*gp.scale), null);
+        imgX += gp.tileSize/2 + gp.tileSize/3;
         for(int j=0; j<nBars; j++){
-            g2.drawImage(heart_bar[1], imgX+(gp.tileSize*(j+1)), y-(3*gp.scale), null);
+            g2.drawImage(heart_bar[1], imgX, y-(3*gp.scale), null);
+            imgX += gp.tileSize/2 + gp.tileSize/3;
         }
-        g2.drawImage(heart_bar[2], imgX+((nBars+1)*gp.tileSize), y-(3*gp.scale), null);
+        g2.drawImage(heart_bar[1], imgX, y-(3*gp.scale), null);
+        g2.drawImage(heart_bar[2], imgX + gp.tileSize/4, y-(3*gp.scale), null);
 
-        imgX += (3*gp.scale);
 
+        imgX = resetX;
+        imgX += (6*gp.scale);
+        y += (gp.scale/2);
+
+        // Draw current life
+        while(i < gp.player.life){
+            g2.drawImage(heart_blank, imgX, y, null);
+            i+=2;
+            imgX += gp.tileSize/2 + gp.tileSize/3;
+        }
+
+        imgX = resetX;
         // Draw current life
         while(i < gp.player.life){
             g2.drawImage(heart_half, imgX, y, null);
@@ -154,7 +169,7 @@ public class UI {
                 g2.drawImage(heart_full, imgX, y, null);
             }
             i++;
-            imgX += gp.tileSize;
+            imgX += gp.tileSize/2 + gp.tileSize/3;
         }
 
     }
@@ -320,7 +335,7 @@ public class UI {
         final int frameX = gp.tileSize*2;
         final int frameY = gp.tileSize;
         final int frameWidth = gp.tileSize*6;
-        final int frameHeight = gp.tileSize*10;
+        final int frameHeight = gp.tileSize*9+(gp.tileSize/2);
         drawSubWindow(frameX, frameY, frameWidth, frameHeight);
 
         // Text

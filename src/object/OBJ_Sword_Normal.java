@@ -20,7 +20,8 @@ public class OBJ_Sword_Normal extends Entity{
 
         attackValue = 1;
 
-        getOBJImage("res/weapons/sword_normal.png");
+        //getOBJImage("res/weapons/sword_normal.png");
+        getOBJImage("/objects/Other/15.png");
     }
 
 }
