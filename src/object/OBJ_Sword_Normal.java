@@ -21,7 +21,7 @@ public class OBJ_Sword_Normal extends Entity{
         attackValue = 1;
 
         getOBJImage("/weapon/sword_normal.png");
-        //getOBJImage("/objects/Other/15.png");
+        description = name.replace("_", " ") + "\nA normal sword";
     }
 
 }

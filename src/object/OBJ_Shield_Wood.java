@@ -21,7 +21,7 @@ public class OBJ_Shield_Wood extends Entity{
         defenseValue = 1;
 
         getOBJImage("/weapon/shield_normal.png");
-        //getOBJImage("/objects/Bookshelf decor/15.png");
+        description = name.replace("_", " ") + "\nA normal shield";
     }
 
 }

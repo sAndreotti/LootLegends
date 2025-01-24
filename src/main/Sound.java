@@ -20,7 +20,7 @@ public class Sound {
         soundURL[6] = getClass().getResource("/sound/receivedamage.wav");
         // Should be swing weapon
         soundURL[7] = getClass().getResource("/sound/fanfare.wav");
-
+        //sound inventory = 9
     }
 
     public void setFile(int i) {

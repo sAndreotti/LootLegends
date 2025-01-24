@@ -19,6 +19,7 @@ public class OBJ_Key extends Entity {
         solidArea.y = spriteDimY;
 
         getOBJImage("/objects/Other/15.png");
+        description = name.replace("_", " ") + "\nA key to unlock doors";
     }
 
 }
