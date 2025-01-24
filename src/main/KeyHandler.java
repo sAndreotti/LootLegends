@@ -10,7 +10,7 @@ public class KeyHandler implements KeyListener {
     GamePanel gp;
 
     // Debug
-    boolean checkDrawTime = false;
+    boolean showDebugText = false;
 
     public KeyHandler(GamePanel gp) {
         this.gp = gp;
@@ -42,7 +42,7 @@ public class KeyHandler implements KeyListener {
 
         // Debug
         if (code == KeyEvent.VK_P) {
-            checkDrawTime = ! checkDrawTime;
+            showDebugText = ! showDebugText;
         }
     }
 

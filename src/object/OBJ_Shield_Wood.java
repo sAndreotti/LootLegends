@@ -20,8 +20,8 @@ public class OBJ_Shield_Wood extends Entity{
 
         defenseValue = 1;
 
-        //getOBJImage("/Users/stefano/Documents/Progetti/LootLegends/res/weapons/sword_normal.png");
-        getOBJImage("/objects/Bookshelf decor/15.png");
+        getOBJImage("/weapon/shield_normal.png");
+        //getOBJImage("/objects/Bookshelf decor/15.png");
     }
 
 }
