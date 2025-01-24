@@ -7,6 +7,7 @@ public class KeyHandler implements KeyListener {
 
     public boolean upPressed, downPressed, leftPressed, rightPressed;
     public boolean enterPressed, jPressed;
+    public boolean shotKeyPressed;
     GamePanel gp;
 
     // Debug
@@ -40,6 +41,16 @@ public class KeyHandler implements KeyListener {
             characterState(code);
         }
 
+        if(code == KeyEvent.VK_K) {
+            shotKeyPressed = true;
+        }
+
+        if(shotKeyPressed) {
+            if(code == KeyEvent.VK_J) {
+                jPressed = true;
+            }
+        }
+
         // Debug
         if (code == KeyEvent.VK_P) {
             showDebugText = ! showDebugText;
@@ -58,6 +69,10 @@ public class KeyHandler implements KeyListener {
             downPressed = false;
         } else if (code == KeyEvent.VK_D) {
             rightPressed = false;
+        }
+
+        if(code == KeyEvent.VK_K) {
+            shotKeyPressed = false;
         }
 
     }

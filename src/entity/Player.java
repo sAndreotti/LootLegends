@@ -3,6 +3,7 @@ package entity;
 import main.GamePanel;
 import main.KeyHandler;
 import object.OBJ_Sword_Normal;
+import object.OBJ_Arrow;
 import object.OBJ_Key;
 import object.OBJ_Shield_Wood;
 
@@ -70,6 +71,7 @@ public class Player extends Entity {
         currentShield = new OBJ_Shield_Wood(gp);
         attack = getAttack();
         defense = getDefense();
+        projectile = new OBJ_Arrow(gp);
     }
 
     public void setItems() {
@@ -182,6 +184,16 @@ public class Player extends Entity {
                 spriteCounter = 0;
             }
 
+            if(gp.keyH.shotKeyPressed && projectile.alive == false && shotAvaibleCounter == 30){
+                // Set default direction
+                projectile.set(worldX, worldY, direction, true, this);
+
+                // Add to list
+                gp.projectileList.add(projectile);
+                shotAvaibleCounter = 0;
+
+            }
+
             // Invincible counter
             if(invincible) {
                 invincibleCounter++;
@@ -189,6 +201,10 @@ public class Player extends Entity {
                     invincible = false;
                     invincibleCounter = 0;
                 }
+            }
+
+            if(shotAvaibleCounter < 30) {
+                shotAvaibleCounter++;
             }
         }
 
@@ -218,7 +234,7 @@ public class Player extends Entity {
                 solidArea.height = attackArea.height;
 
                 int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
-                damageMonster(monsterIndex);
+                damageMonster(monsterIndex, attack);
 
                 worldX = currentWorldX;
                 worldY = currentWorldY;
@@ -304,12 +320,13 @@ public class Player extends Entity {
     }
 
     // Player attack monster
-    public void damageMonster(int i){
+    public void damageMonster(int i, int attack){
         if(i != -1) {
             if(!gp.monster[i].invincible){
                 //gp.playSE(5);
                 // Monster damaged
                 int damage = attack - gp.monster[i].defense;
+
                 if(damage > 0){
                     gp.ui.addMessage("Player attacked the monster for "+damage+" damage.");
                     gp.monster[i].life -= damage;
@@ -351,7 +368,7 @@ public class Player extends Entity {
     // Player got in contact with monster
     public void contactMonster(int i) {
         if(i!= -1){
-            if(!invincible){
+            if(!invincible && !gp.monster[i].dying) {
                 //gp.playSE(6);
                 // Calculate damage
                 int damage = gp.monster[i].attack - defense;

@@ -94,6 +94,13 @@ public class Entity {
     public int diffX = 0;
     public int diffY = 0;
 
+    // Mana
+    public int maxMana;
+    public int mana;
+    public Projectile projectile;
+    public int useCost;
+    public int shotAvaibleCounter = 0;
+
     public Entity(GamePanel gp) {
         this.gp = gp;
     }
@@ -218,7 +225,7 @@ public class Entity {
         boolean contactPlayer = gp.cChecker.checkPlayer(this);
 
         // If it is a monster and it is in contact with the player
-        if(this.type == 2 && contactPlayer) {
+        if(this.type == typeMonster && contactPlayer) {
             if(!gp.player.invincible) {
                 gp.playSE(6);
                 int damage = attack - gp.player.defense;

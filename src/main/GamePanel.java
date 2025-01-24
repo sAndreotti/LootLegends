@@ -46,6 +46,7 @@ public class GamePanel extends JPanel implements Runnable {
     public Entity[] npc = new Entity[10];
     public Entity[] monster = new Entity[20];
     ArrayList<Entity> entityList = new ArrayList<>();
+    public ArrayList<Entity> projectileList = new ArrayList<>();
 
     // Collisions
     public CollisionChecker cChecker = new CollisionChecker(this);
@@ -120,18 +121,32 @@ public class GamePanel extends JPanel implements Runnable {
             // Play
             player.update();
 
+            // Print NPC
             for (Entity entity : npc) {
                 if (entity != null) {
                     entity.update();
                 }
             }
 
+            // Print Monsters
             for(int i=0; i<monster.length; i++){
                 if(monster[i] != null){
                     if(monster[i].alive && !monster[i].dying){
                         monster[i].update();
                     } else if(!monster[i].alive && !monster[i].dying){
                         monster[i] = null;
+                    }
+                }
+            }
+
+            // Print Projectiles
+            for(int i=0; i<projectileList.size(); i++){
+                if(projectileList.get(i) != null){
+                    if(projectileList.get(i).alive){
+                        projectileList.get(i).update();
+                    } else if(projectileList.get(i).alive){
+                        System.out.println("Remove projectile");
+                        projectileList.remove(i);
                     }
                 }
             }
@@ -184,6 +199,13 @@ public class GamePanel extends JPanel implements Runnable {
 
         // Monsters
         for (Entity entity : monster) {
+            if (entity != null) {
+                entityList.add(entity);
+            }
+        }
+
+        // Projectiles
+        for (Entity entity : projectileList) {
             if (entity != null) {
                 entityList.add(entity);
             }
