@@ -424,10 +424,26 @@ public class UI {
         int slotY = slotYstart;
         int slotSize = gp.tileSize+3;
 
-        // TODO maybe little than this
+        // Setting size as little smaller than the tile size
+        int sizeItem = gp.tileSize-(5*gp.scale);
+        int offestX = sizeItem/4;
+        int offestY = sizeItem/4;
+
         // Draw player items
         for(int i=0; i<gp.player.inventory.size(); i++){
-            g2.drawImage(gp.player.inventory.get(i).image, slotX, slotY, gp.tileSize, gp.tileSize, null);
+
+            // Equip the item
+            if(gp.player.inventory.get(i) == gp.player.currentWeapon){
+                g2.setColor(titleColor);
+                g2.setStroke(new BasicStroke(3));
+                g2.fillRoundRect(slotX, slotY, gp.tileSize, gp.tileSize, 10, 10);
+            } else if(gp.player.inventory.get(i) == gp.player.currentShield){
+                g2.setColor(titleColor);
+                g2.setStroke(new BasicStroke(3));
+                g2.fillRoundRect(slotX, slotY, gp.tileSize, gp.tileSize, 10, 10);
+            }
+
+            g2.drawImage(gp.player.inventory.get(i).image, slotX+offestX, slotY+offestY, sizeItem, sizeItem, null);
             slotX += slotSize;
             if(slotX > frameX + frameWidth - gp.tileSize){
                 slotX = slotXstart;

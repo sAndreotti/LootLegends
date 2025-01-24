@@ -15,7 +15,6 @@ public class Entity {
     public int speed;
     public GamePanel gp;
     protected UtilityTool uTool = new UtilityTool();
-    public int type; // 0 0 player, 1 = npc, 2 = monsters
 
     // Dialogues
     String[] dialogues = new String[20];
@@ -78,6 +77,15 @@ public class Entity {
     public boolean alive = true;
     public boolean dying = false;
 
+    // Types
+    public int type; // 0 = player, 1 = npc, 2 = monsters
+    public final int typePlayer = 0;
+    public final int typeNPC = 1;
+    public final int typeMonster = 2;
+    public final int typeSword = 3;
+    public final int typeShield = 4;
+    public final int typeConsumable = 5;
+
     // Objects
     public BufferedImage image, image2, image3;
     public String name;
@@ -91,6 +99,7 @@ public class Entity {
     }
 
     public void setAction() { }
+    public void use(Entity entity) { }
     public void damageReaction() { }
     public void attack() { }
 

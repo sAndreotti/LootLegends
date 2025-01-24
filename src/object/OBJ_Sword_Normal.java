@@ -9,16 +9,16 @@ public class OBJ_Sword_Normal extends Entity{
         super(gp);
 
         name = "Sword_Normal";
-        spriteDimX = 8;
-        spriteDimY = 5;
+        type = typeSword;
+        spriteDimX = 12;
+        spriteDimY = 12;
         // Center the object in the tile
         diffX = (gp.originalTileSize - spriteDimX)/2*gp.scale;
         diffY = (gp.originalTileSize - spriteDimY)/2*gp.scale;
 
-        solidArea.x = spriteDimX;
-        solidArea.y = spriteDimY;
-
         attackValue = 1;
+        attackArea.width = gp.tileSize + gp.tileSize/4;
+        attackArea.height = gp.tileSize + gp.tileSize/4;
 
         getOBJImage("/weapon/sword_normal.png");
         description = name.replace("_", " ") + "\nA normal sword";

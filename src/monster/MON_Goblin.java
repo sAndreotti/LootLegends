@@ -15,7 +15,7 @@ public class MON_Goblin extends Entity {
         speed = 1;
         maxLife = 4;
         life = maxLife;
-        type = 2;
+        type = typeMonster;
         attacking = false;
 
         /*

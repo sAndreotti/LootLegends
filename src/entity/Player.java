@@ -3,8 +3,6 @@ package entity;
 import main.GamePanel;
 import main.KeyHandler;
 import object.OBJ_Sword_Normal;
-import object.OBJ_Book;
-import object.OBJ_Door;
 import object.OBJ_Key;
 import object.OBJ_Shield_Wood;
 
@@ -16,7 +14,6 @@ public class Player extends Entity {
     KeyHandler keyH;
     boolean idle = true;
     public int character = 1;
-    int attackRange = 2*gp.scale;
 
     public final int screenX;
     public final int screenY;
@@ -45,8 +42,6 @@ public class Player extends Entity {
         solidAreaDefaultY = solidArea.y;
 
         // Attack area
-        attackArea.width = gp.tileSize+attackRange;
-        attackArea.height = gp.tileSize+attackRange;
         attacking = false;
 
     }
@@ -78,32 +73,15 @@ public class Player extends Entity {
     }
 
     public void setItems() {
-        // Add default items
+        // Add default items to inventory
         inventory.add(currentWeapon);
         inventory.add(currentShield);
 
         /////
         inventory.add(new OBJ_Key(gp));
-        inventory.add(new OBJ_Book(gp));
-        inventory.add(new OBJ_Door(gp));
-        inventory.add(new OBJ_Key(gp));
-        inventory.add(new OBJ_Book(gp));
-        inventory.add(new OBJ_Door(gp));
-        inventory.add(new OBJ_Key(gp));
-        inventory.add(new OBJ_Book(gp));
-        inventory.add(new OBJ_Key(gp));
-        inventory.add(new OBJ_Book(gp));
-        inventory.add(new OBJ_Door(gp));
-        inventory.add(new OBJ_Key(gp));
-        inventory.add(new OBJ_Book(gp));
-        inventory.add(new OBJ_Door(gp));
-        inventory.add(new OBJ_Key(gp));
-        inventory.add(new OBJ_Book(gp));
-        inventory.add(new OBJ_Key(gp));
-        inventory.add(new OBJ_Book(gp));
     }
 
-    public void updateSprite(int i){
+    public void updatePlayerSprite(int i){
         if(i != this.character){
             this.character = i;
 
@@ -114,6 +92,11 @@ public class Player extends Entity {
             right = new ArrayList<>();
             getImage("player", this.character);
         }
+    }
+
+    public void updateWeaponSprite(String weaponType){
+        // Add different weapons sprites
+        return;
     }
 
     public void update() {
@@ -254,7 +237,15 @@ public class Player extends Entity {
 
     public void pickUpObject(int i) {
         if(i != -1){
-
+            if(inventory.size() != maxInventorySize) {
+                //gp.playSE(4);
+                gp.ui.addMessage("Player picked up "+gp.obj[i].name.replace("_", " ")+".");
+                inventory.add(gp.obj[i]);
+                //gp.obj[i].pickedUp = true;
+                gp.obj[i] = null;
+            } else {
+                gp.ui.addMessage("Player's inventory is full.");
+            }
         }
     }
 
@@ -268,6 +259,48 @@ public class Player extends Entity {
     public void speak(){
         // For specific iterations
         super.speak();
+    }
+
+    public void checkLevelUp() {
+        if(exp >= nextLevelExp){
+            level++;
+            exp = exp - nextLevelExp;
+            nextLevelExp = level*5;
+            maxLife += 2;
+            life = maxLife;
+            strenght++;
+            dexterity++;
+            attack = getAttack();
+            defense = getDefense();
+            if(exp >= nextLevelExp){
+                checkLevelUp();
+            } else {
+                gp.ui.addMessage("Player leveled up to "+level+".");
+            }
+        }
+    }
+
+    public void selectItem() {
+        int itemIndex = gp.ui.getItemIndexOnSlot();
+
+        if(itemIndex != -1 && itemIndex < inventory.size()){
+            Entity item = inventory.get(itemIndex);
+            if(item.type == typeSword){
+                // Equip weapon
+                currentWeapon = item;
+                attack = getAttack();
+                updateWeaponSprite("");
+            } else if(item.type == typeShield){
+                // Equip shield
+                currentShield = item;
+                defense = getDefense();
+            }
+
+            if(item.type == typeConsumable) {
+                item.use(this);
+                inventory.remove(itemIndex);
+            }
+        }
     }
 
     // Player attack monster
@@ -315,25 +348,6 @@ public class Player extends Entity {
         }
     }
 
-    public void checkLevelUp() {
-        if(exp >= nextLevelExp){
-            level++;
-            exp = exp - nextLevelExp;
-            nextLevelExp = level*5;
-            maxLife += 2;
-            life = maxLife;
-            strenght++;
-            dexterity++;
-            attack = getAttack();
-            defense = getDefense();
-            if(exp >= nextLevelExp){
-                checkLevelUp();
-            } else {
-                gp.ui.addMessage("Player leveled up to "+level+".");
-            }
-        }
-    }
-
     // Player got in contact with monster
     public void contactMonster(int i) {
         if(i!= -1){
@@ -362,6 +376,7 @@ public class Player extends Entity {
     }
 
     public int getAttack() {
+        attackArea = currentWeapon.attackArea;
         return strenght + currentWeapon.attackValue;
     }
 
@@ -369,7 +384,6 @@ public class Player extends Entity {
         return dexterity + currentShield.defenseValue;
     }
     
-
     public void draw(Graphics2D g2) {
         BufferedImage image = switch (direction) {
             case "up" -> up.get(spriteNum);

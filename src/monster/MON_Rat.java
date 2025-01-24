@@ -15,11 +15,11 @@ public class MON_Rat extends Entity {
         speed = 1;
         maxLife = 4;
         life = maxLife;
-        type = 2;
+        type = typeMonster;
         attacking = false;
 
         // Set stats
-        attack = 3;
+        attack = 4;
         defense = 1;
         exp = 10;
 
