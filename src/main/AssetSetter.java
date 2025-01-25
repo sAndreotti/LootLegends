@@ -6,9 +6,11 @@ import monster.MON_Goblin_Mage;
 import monster.MON_Goblin_Sword;
 import monster.MON_Rat;
 import object.OBJ_Key;
+import weapon.OBJ_Bow_Silver;
 import weapon.OBJ_PotionRed;
 import weapon.OBJ_Shield_Silver;
 import weapon.OBJ_Sword_Black;
+import weapon.OBJ_Wand_Gold;
 
 public class AssetSetter {
 
@@ -33,9 +35,28 @@ public class AssetSetter {
         gp.obj[2].worldX = 11*gp.tileSize;
         gp.obj[2].worldY = 5*gp.tileSize;
 
-        gp.obj[3] = new OBJ_Sword_Black(gp);
-        gp.obj[3].worldX = 5*gp.tileSize;
-        gp.obj[3].worldY = 5*gp.tileSize;
+        switch(gp.player.character){
+            case 1:
+                gp.obj[3] = new OBJ_Bow_Silver(gp);
+                gp.obj[3].worldX = 5*gp.tileSize;
+                gp.obj[3].worldY = 5*gp.tileSize;
+                break;
+            
+            case 2:
+                gp.obj[3] = new OBJ_Sword_Black(gp);
+                gp.obj[3].worldX = 5*gp.tileSize;
+                gp.obj[3].worldY = 5*gp.tileSize;
+                break;
+
+            case 3:
+                gp.obj[3] = new OBJ_Wand_Gold(gp);
+                gp.obj[3].worldX = 5*gp.tileSize;
+                gp.obj[3].worldY = 5*gp.tileSize;
+                break;
+            
+
+        }
+        
 
         gp.obj[4] = new OBJ_Shield_Silver(gp);
         gp.obj[4].worldX = 6*gp.tileSize;

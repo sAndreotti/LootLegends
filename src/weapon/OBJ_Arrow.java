@@ -33,18 +33,6 @@ public class OBJ_Arrow extends Projectile{
 
     }
 
-    public void getImage(String direction) {
-        if (direction.equals("right")) {
-            image = right_image;
-        } else if (direction.equals("left")) {
-            image = left_image;
-        } else if (direction.equals("up")) {
-            image = up_image;
-        } else if (direction.equals("down")) {
-            image = down_image;
-        }
-    }
-
     public void getSolidArea(String direction) {
         if (direction.equals("right") || direction.equals("left")) {
             spriteDimX = 10;

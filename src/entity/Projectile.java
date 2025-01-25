@@ -16,9 +16,6 @@ public class Projectile extends Entity{
         super(gp);
     }
 
-    public void getImage(String direction) { }
-    public void getSolidArea(String direction) { }
-
     public void set(int worldX, int worldY, String direction, boolean alive, Entity user) {
         this.worldX = worldX;
         this.worldY = worldY;
@@ -30,6 +27,20 @@ public class Projectile extends Entity{
         getImage(direction);
         getSolidArea(direction);
      }
+
+     public void getSolidArea(String direction) { }
+
+     public void getImage(String direction) {
+        if (direction.equals("right")) {
+            image = right_image;
+        } else if (direction.equals("left")) {
+            image = left_image;
+        } else if (direction.equals("up")) {
+            image = up_image;
+        } else if (direction.equals("down")) {
+            image = down_image;
+        }
+    }
 
     public void update() {
         if (user == gp.player) {

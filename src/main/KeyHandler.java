@@ -126,7 +126,7 @@ public class KeyHandler implements KeyListener {
             if(gp.ui.commandNum == 3){
                 gp.ui.titleScreenState=0;
             } else {
-                gp.player.updatePlayerSprite(gp.ui.commandNum+1);
+                gp.player.updatePlayer(gp.ui.commandNum+1);
                 gp.gameState = gp.playState;
                 gp.playMusic(0);
             }

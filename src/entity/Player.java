@@ -4,8 +4,10 @@ import main.GamePanel;
 import main.KeyHandler;
 import weapon.OBJ_Arrow;
 import weapon.OBJ_Bow_Normal;
+import weapon.OBJ_Fireball;
 import weapon.OBJ_Shield_Wood;
 import weapon.OBJ_Sword_Normal;
+import weapon.OBJ_Wand_Normal;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -38,7 +40,7 @@ public class Player extends Entity {
         System.out.println("Preparing the player...");
         setDefaultValues();
         setClass();
-        setItems();
+        //setItems();
         getImage("player", this.character);
         System.out.println(" ");
 
@@ -74,24 +76,36 @@ public class Player extends Entity {
         // Default weapons
         currentShield = new OBJ_Shield_Wood(gp);
         defense = getDefense();
-        projectile = new OBJ_Arrow(gp);
+        projectile = new OBJ_Fireball(gp);
     }
 
     public void setClass() {
-        System.out.println("Setting player class...");
+        System.out.println("\nSetting player class...");
         if(character == 1){
             // Archer
+            System.out.println("Archer class...");
             currentWeapon = new OBJ_Bow_Normal(gp);
             attack = getAttack();
+
             arrow = new OBJ_Arrow(gp);
             arrow.attack = currentWeapon.attackValue;
-            System.out.println("Arrow attack: "+arrow.attack);
+            //System.out.println("Arrow attack: "+arrow.attack+"\n");
+
         } else if(character == 2){
             // Warrior
+            System.out.println("Warrior class...");
             currentWeapon = new OBJ_Sword_Normal(gp);
             attack = getAttack();
+
         } else if(character == 3){
             // Mage
+            System.out.println("Mage class...");
+            currentWeapon = new OBJ_Wand_Normal(gp);
+            attack = getAttack();
+
+            arrow = new OBJ_Fireball(gp);
+            arrow.attack = currentWeapon.attackValue;
+            //System.out.println("Fireball attack: "+arrow.attack+"\n");
         }
     }
 
@@ -103,7 +117,8 @@ public class Player extends Entity {
 
     }
 
-    public void updatePlayerSprite(int i){
+    public void updatePlayer(int i){
+        // Function to update player sprites and objects
         if(i != this.character){
             this.character = i;
 
@@ -114,6 +129,8 @@ public class Player extends Entity {
             right = new ArrayList<>();
             getImage("player", this.character);
             setClass();
+            setItems();
+            gp.aSetter.setObject();
         }
     }
 
@@ -234,8 +251,8 @@ public class Player extends Entity {
     public void attacking() {
         spriteCounter++;
         if(spriteCounter > 8) {
-            if(character == 1) {
-                // Archer shoots an arrow
+            if(character == 1 || character == 3) {
+                // Archer shoots an arrow or Mage shoots a fireball
                 if(arrow.alive == false && shotAvaibleCounter == 30) {
                     arrow.set(worldX, worldY, direction, true, this);
                     gp.projectileList.add(arrow);
@@ -337,9 +354,10 @@ public class Player extends Entity {
                 // Equip weapon
                 currentWeapon = item;
                 attack = getAttack();
-                if(character == 1) {
-                    System.out.println("Weapon changed to "+currentWeapon.name);
+                if(character == 1 || character == 3) {
+                    //System.out.println("Weapon changed to "+currentWeapon.name);
                     arrow.attack = currentWeapon.attackValue;
+                    //System.out.println("Arrow attack changed to "+arrow.attack);
                 }
                 updateWeaponSprite("");
             } else if(item.type == typeShield){
