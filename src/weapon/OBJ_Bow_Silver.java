@@ -1,14 +1,14 @@
-package object;
+package weapon;
 
 import entity.Entity;
 import main.GamePanel;
 
-public class OBJ_Sword_Black extends Entity{
-
-    public OBJ_Sword_Black(GamePanel gp){
+public class OBJ_Bow_Silver extends Entity{
+    
+    public OBJ_Bow_Silver(GamePanel gp){
         super(gp);
 
-        name = "Sword_Black";
+        name = "Bow_Silver";
         type = typeSword;
         spriteDimX = 12;
         spriteDimY = 12;
@@ -20,7 +20,8 @@ public class OBJ_Sword_Black extends Entity{
         attackArea.width = gp.tileSize + gp.tileSize/3;
         attackArea.height = gp.tileSize + gp.tileSize/3;
 
-        getOBJImage("/weapon/sword_black.png");
-        description = name.replace("_", " ") + "\nAn upgraded sword";
+        getOBJImage("/weapon/bow_silver.png");
+        description = name.replace("_", " ") + "\nA silver bow";
     }
+
 }

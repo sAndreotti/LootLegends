@@ -41,14 +41,9 @@ public class KeyHandler implements KeyListener {
             characterState(code);
         }
 
+        // Shot using mana
         if(code == KeyEvent.VK_K) {
             shotKeyPressed = true;
-        }
-
-        if(shotKeyPressed) {
-            if(code == KeyEvent.VK_J) {
-                jPressed = true;
-            }
         }
 
         // Debug
@@ -142,6 +137,7 @@ public class KeyHandler implements KeyListener {
     }
 
     public void playState(int code){
+        // Attack
         if(code == KeyEvent.VK_J){
             jPressed = true;
         }

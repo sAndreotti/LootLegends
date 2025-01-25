@@ -67,6 +67,7 @@ public class Entity {
 
     public Entity currentWeapon;
     public Entity currentShield;
+    public Projectile arrow;
 
     // Item attributes
     public int attackValue;
@@ -170,6 +171,18 @@ public class Entity {
         } catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+    public BufferedImage loadImage(String path) {
+        BufferedImage image = null;
+        try{
+            image = uTool.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().
+                    getResourceAsStream(path))), spriteDimX*gp.scale, spriteDimY*gp.scale);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        return image;
     }
 
     public void hurtAnimation() {
@@ -318,7 +331,7 @@ public class Entity {
                 };
 
                 // Health bar for monsters
-                if(type == 2 && hpBarOn){
+                if(type == typeMonster && hpBarOn){
                     double oneScale = (double) gp.tileSize/maxLife;
                     double hpBarValue = oneScale*life;
 

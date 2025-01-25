@@ -2,17 +2,21 @@ package entity;
 
 import main.GamePanel;
 import main.KeyHandler;
-import object.OBJ_Sword_Normal;
-import object.OBJ_Arrow;
-import object.OBJ_Key;
-import object.OBJ_Shield_Wood;
+import weapon.OBJ_Arrow;
+import weapon.OBJ_Bow_Normal;
+import weapon.OBJ_Shield_Wood;
+import weapon.OBJ_Sword_Normal;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class Player extends Entity {
     KeyHandler keyH;
+    public int keyAttack = KeyEvent.VK_J;
+    public int keyMana = KeyEvent.VK_K;
+
     boolean idle = true;
     public int character = 1;
 
@@ -33,6 +37,7 @@ public class Player extends Entity {
 
         System.out.println("Preparing the player...");
         setDefaultValues();
+        setClass();
         setItems();
         getImage("player", this.character);
         System.out.println(" ");
@@ -67,20 +72,35 @@ public class Player extends Entity {
         coin = 0;
 
         // Default weapons
-        currentWeapon = new OBJ_Sword_Normal(gp);
         currentShield = new OBJ_Shield_Wood(gp);
-        attack = getAttack();
         defense = getDefense();
         projectile = new OBJ_Arrow(gp);
     }
 
+    public void setClass() {
+        System.out.println("Setting player class...");
+        if(character == 1){
+            // Archer
+            currentWeapon = new OBJ_Bow_Normal(gp);
+            attack = getAttack();
+            arrow = new OBJ_Arrow(gp);
+            arrow.attack = currentWeapon.attackValue;
+            System.out.println("Arrow attack: "+arrow.attack);
+        } else if(character == 2){
+            // Warrior
+            currentWeapon = new OBJ_Sword_Normal(gp);
+            attack = getAttack();
+        } else if(character == 3){
+            // Mage
+        }
+    }
+
     public void setItems() {
+        inventory.clear();
         // Add default items to inventory
         inventory.add(currentWeapon);
         inventory.add(currentShield);
 
-        /////
-        inventory.add(new OBJ_Key(gp));
     }
 
     public void updatePlayerSprite(int i){
@@ -93,6 +113,7 @@ public class Player extends Entity {
             left = new ArrayList<>();
             right = new ArrayList<>();
             getImage("player", this.character);
+            setClass();
         }
     }
 
@@ -184,6 +205,7 @@ public class Player extends Entity {
                 spriteCounter = 0;
             }
 
+            // Shooting mana
             if(gp.keyH.shotKeyPressed && projectile.alive == false && shotAvaibleCounter == 30){
                 // Set default direction
                 projectile.set(worldX, worldY, direction, true, this);
@@ -191,7 +213,6 @@ public class Player extends Entity {
                 // Add to list
                 gp.projectileList.add(projectile);
                 shotAvaibleCounter = 0;
-
             }
 
             // Invincible counter
@@ -212,42 +233,53 @@ public class Player extends Entity {
 
     public void attacking() {
         spriteCounter++;
-        if(spriteCounter>8){
-            // Sprite Attack
-            if(spriteNum < 13){
-                spriteNum++;
-            } else {
-                // Check if hit something
-                int currentWorldX = worldX;
-                int currentWorldY = worldY;
-                int solidAreaWidth = solidArea.width;
-                int solidAreaHeight = solidArea.height;
-
-                switch (direction){
-                    case "up": worldY -= attackArea.height;
-                    case "down": worldY += attackArea.height;
-                    case "left": worldX -= attackArea.width;
-                    case "right": worldX += attackArea.width;
+        if(spriteCounter > 8) {
+            if(character == 1) {
+                // Archer shoots an arrow
+                if(arrow.alive == false && shotAvaibleCounter == 30) {
+                    arrow.set(worldX, worldY, direction, true, this);
+                    gp.projectileList.add(arrow);
+                    shotAvaibleCounter = 0;
                 }
+            } else {
+                // Normal attack
+                if(spriteNum < 13) {
+                    spriteNum++;
+                } else {
+                    // Check if hit something
+                    int currentWorldX = worldX;
+                    int currentWorldY = worldY;
+                    int solidAreaWidth = solidArea.width;
+                    int solidAreaHeight = solidArea.height;
 
-                solidArea.width = attackArea.width;
-                solidArea.height = attackArea.height;
+                    switch (direction) {
+                        case "up": worldY -= attackArea.height; break;
+                        case "down": worldY += attackArea.height; break;
+                        case "left": worldX -= attackArea.width; break;
+                        case "right": worldX += attackArea.width; break;
+                    }
 
-                int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
-                damageMonster(monsterIndex, attack);
+                    solidArea.width = attackArea.width;
+                    solidArea.height = attackArea.height;
 
-                worldX = currentWorldX;
-                worldY = currentWorldY;
-                solidArea.width = solidAreaWidth;
-                solidArea.height = solidAreaHeight;
+                    int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
+                    damageMonster(monsterIndex, attack);
 
-                // End attack
-                idle = true;
-                spriteCounter = 0;
-                attacking = false;
-                return;
+                    worldX = currentWorldX;
+                    worldY = currentWorldY;
+                    solidArea.width = solidAreaWidth;
+                    solidArea.height = solidAreaHeight;
+
+                    // End attack
+                    idle = true;
+                    spriteCounter = 0;
+                    attacking = false;
+                    return;
+                }
             }
+            idle = true;
             spriteCounter = 0;
+            attacking = false;
         }
     }
 
@@ -305,6 +337,10 @@ public class Player extends Entity {
                 // Equip weapon
                 currentWeapon = item;
                 attack = getAttack();
+                if(character == 1) {
+                    System.out.println("Weapon changed to "+currentWeapon.name);
+                    arrow.attack = currentWeapon.attackValue;
+                }
                 updateWeaponSprite("");
             } else if(item.type == typeShield){
                 // Equip shield
@@ -343,6 +379,8 @@ public class Player extends Entity {
                     // HP bar show
                     gp.monster[i].hpBarOn = true;
                     gp.monster[i].hpBarCounter = 0;
+                } else {
+                    gp.ui.addMessage("Player attacked the monster but it didn't hurt.");
                 }
                 
                 // If it dies

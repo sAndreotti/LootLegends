@@ -1,14 +1,23 @@
 package entity;
 
+
 import main.GamePanel;
+import java.awt.image.BufferedImage;
 
 public class Projectile extends Entity{
 
     Entity user;
+    public BufferedImage up_image;
+    public BufferedImage down_image;
+    public BufferedImage left_image;
+    public BufferedImage right_image;
 
     public Projectile(GamePanel gp) {
         super(gp);
     }
+
+    public void getImage(String direction) { }
+    public void getSolidArea(String direction) { }
 
     public void set(int worldX, int worldY, String direction, boolean alive, Entity user) {
         this.worldX = worldX;
@@ -18,10 +27,11 @@ public class Projectile extends Entity{
         this.user = user;
         this.life = this.maxLife;
 
+        getImage(direction);
+        getSolidArea(direction);
      }
 
     public void update() {
-
         if (user == gp.player) {
             // Check if the projectile hits a monster
             int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
@@ -30,12 +40,12 @@ public class Projectile extends Entity{
                 alive = false;
             }
 
-        } else {
+        } /*else {
             if (gp.player.solidArea.intersects(solidArea)) {
                 gp.player.life -= attack;
                 alive = false;
             }
-        }
+        }*/
 
         switch (direction) {
             case "up":

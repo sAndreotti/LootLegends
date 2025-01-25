@@ -1,14 +1,14 @@
-package object;
+package weapon;
 
 import entity.Entity;
 import main.GamePanel;
 
-public class OBJ_Shield_Wood extends Entity{
+public class OBJ_Shield_Silver extends Entity{
 
-    public OBJ_Shield_Wood(GamePanel gp){
+    public OBJ_Shield_Silver(GamePanel gp) {
         super(gp);
-
-        name = "Shield_Normal";
+        
+        name = "Shield_Silver";
         type = typeShield;
         spriteDimX = 12;
         spriteDimY = 12;
@@ -19,10 +19,10 @@ public class OBJ_Shield_Wood extends Entity{
         solidArea.x = spriteDimX;
         solidArea.y = spriteDimY;
 
-        defenseValue = 1;
+        defenseValue = 3;
 
-        getOBJImage("/weapon/shield_normal.png");
-        description = name.replace("_", " ") + "\nA normal shield";
+        getOBJImage("/weapon/shield_silver.png");
+        description = name.replace("_", " ") + "\nAn upgraded shield";
     }
-
+    
 }

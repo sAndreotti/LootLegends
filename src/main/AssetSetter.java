@@ -2,11 +2,13 @@ package main;
 
 import entity.NPC_OldMan;
 import monster.MON_Goblin;
+import monster.MON_Goblin_Mage;
+import monster.MON_Goblin_Sword;
 import monster.MON_Rat;
 import object.OBJ_Key;
-import object.OBJ_PotionRed;
-import object.OBJ_Shield_Silver;
-import object.OBJ_Sword_Black;
+import weapon.OBJ_PotionRed;
+import weapon.OBJ_Shield_Silver;
+import weapon.OBJ_Sword_Black;
 
 public class AssetSetter {
 
@@ -80,13 +82,20 @@ public class AssetSetter {
 
     public void setMonster() {
         gp.monster[0] = new MON_Rat(gp);
-        gp.monster[0].worldX = gp.tileSize*17;
-        gp.monster[0].worldY = gp.tileSize*10;
-        gp.monster[0].direction = "right";
+        gp.monster[0].worldX = gp.tileSize*16 + gp.tileSize/2;
+        gp.monster[0].worldY = gp.tileSize*10 + gp.tileSize/2;
 
-        gp.monster[1] = new MON_Goblin(gp);
-        gp.monster[1].worldX = gp.tileSize*17;
-        gp.monster[1].worldY = gp.tileSize*5;
+        gp.monster[1] = new MON_Goblin(gp, 16, 5);
+        gp.monster[1].worldX = gp.tileSize*16 + gp.tileSize/2;
+        gp.monster[1].worldY = gp.tileSize*5 + gp.tileSize/2;
+
+        gp.monster[2] = new MON_Goblin_Sword(gp);
+        gp.monster[2].worldX = gp.tileSize*18 + gp.tileSize/2;
+        gp.monster[2].worldY = gp.tileSize*5 + gp.tileSize/2;
+
+        gp.monster[3] = new MON_Goblin_Mage(gp);
+        gp.monster[3].worldX = gp.tileSize*16 + gp.tileSize/2;
+        gp.monster[3].worldY = gp.tileSize*7 + gp.tileSize/2;
     }
 
 }

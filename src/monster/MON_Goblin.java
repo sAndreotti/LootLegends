@@ -7,36 +7,45 @@ import java.util.Random;
 
 public class MON_Goblin extends Entity {
 
-    public MON_Goblin(GamePanel gp) {
+    int defaultX;
+    int defaultY;
+
+    public MON_Goblin(GamePanel gp, int x, int y) {
         super(gp);
         this.gp = gp;
 
         name = "Goblin";
-        speed = 1;
-        maxLife = 4;
+        speed = 0; // 1
+        maxLife = 8;
         life = maxLife;
         type = typeMonster;
         attacking = false;
 
-        /*
-        solidArea.x = 10*gp.scale;
-        solidArea.y = 10*gp.scale;
-        solidArea.width = 12*gp.scale;
-        solidArea.height = 12*gp.scale;
-        */
+        // Set stats
+        attack = 4;
+        defense = 2;
+        exp = 10;
 
-        solidArea.x = 8*gp.scale;
-        solidArea.y = 8*gp.scale;
-        solidArea.width = 16*gp.scale;
-        solidArea.height = 16*gp.scale;
+        solidArea.x = 3*gp.scale;
+        solidArea.y = 3*gp.scale;
+        solidArea.width = 14*gp.scale;
+        solidArea.height = 15*gp.scale;
 
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 
         getImage("enemies", 2);
+        // Set default position
+        defaultX = x;
+        defaultY = y;
+
     }
 
     public void setAction() {
+        upAndDown();
+    }
+
+    public void passive() {
         actionLockCounter++;
 
         if(actionLockCounter == gp.FPS*2){
@@ -58,7 +67,14 @@ public class MON_Goblin extends Entity {
 
             actionLockCounter = 0;
         }
+    }
 
+    public void upAndDown() {
+        if(worldY/gp.tileSize - defaultY == 3) {
+            direction = "up";
+        } else if(worldY/gp.tileSize - defaultY == -3) {
+            direction = "down";
+        }
     }
 
     public void damageReaction() {
