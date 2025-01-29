@@ -45,7 +45,7 @@ public class AssetSetter {
             case 2:
                 gp.obj[3] = new OBJ_Sword_Black(gp);
                 gp.obj[3].worldX = 5*gp.tileSize;
-                gp.obj[3].worldY = 5*gp.tileSize;
+                gp.obj[3].worldY = 7*gp.tileSize;
                 break;
 
             case 3:

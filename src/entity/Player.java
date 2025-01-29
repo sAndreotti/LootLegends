@@ -40,7 +40,7 @@ public class Player extends Entity {
         System.out.println("Preparing the player...");
         setDefaultValues();
         setClass();
-        //setItems();
+        setItems();
         getImage("player", this.character);
         System.out.println(" ");
 
@@ -57,7 +57,7 @@ public class Player extends Entity {
     public void setDefaultValues() {
         //Start position
         worldX = gp.tileSize*5;
-        worldY = gp.tileSize*7;
+        worldY = gp.tileSize*10;
         speed = 4;
         direction = "right";
 

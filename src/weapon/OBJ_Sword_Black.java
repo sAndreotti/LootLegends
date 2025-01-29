@@ -10,8 +10,8 @@ public class OBJ_Sword_Black extends Entity{
 
         name = "Sword_Black";
         type = typeSword;
-        spriteDimX = 12;
-        spriteDimY = 12;
+        spriteDimX = 12; //12
+        spriteDimY = 12; //12
         // Center the object in the tile
         diffX = (gp.originalTileSize - spriteDimX)/2*gp.scale;
         diffY = (gp.originalTileSize - spriteDimY)/2*gp.scale;
@@ -20,7 +20,7 @@ public class OBJ_Sword_Black extends Entity{
         attackArea.width = gp.tileSize + gp.tileSize/3;
         attackArea.height = gp.tileSize + gp.tileSize/3;
 
-        getOBJImage("/weapon/sword_black.png");
+        getOBJImage("/superw/behemoth.png");
         description = name.replace("_", " ") + "\nAn upgraded sword";
     }
 }

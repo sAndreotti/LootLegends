@@ -19,6 +19,16 @@ public class UtilityTool {
         return scaledImage;
     }
 
+    public BufferedImage loadTileSprite(String spriteLocation){
+        try {
+            BufferedImage sprite = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(spriteLocation)));
+            return sprite;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public void loadEntitySprite(ArrayList<BufferedImage> arr, String spriteLocation, boolean reverse, int size, int spriteDim, int scale){
         try {
             BufferedImage playerSprite = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(spriteLocation)));

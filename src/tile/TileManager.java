@@ -18,57 +18,66 @@ public class TileManager {
     GamePanel gp;
     public Tile[] tile;
     public int[][] mapTileNum;
+    String mapPath = "/maps/map3.json";
 
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
-        tile = new Tile[110];
+        tile = new Tile[130];
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
         System.out.println("Loading map...");
-        loadSprites("/maps/spritesheet.png");
-        loadMap("/maps/map.json");
+        //loadSprites("/maps/spritesheet.png");
+        //loadMap("/maps/map.json");
+        loadSprites();
+        loadMap();
         System.out.println(" ");
     }
 
-    public void loadSprites(String spritePath){
+    public void loadSprites(){
         UtilityTool uTool = new UtilityTool();
-
         int counter = 0;
         try {
-            // leggo png, e creo le tile
-            BufferedImage tiles = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(spritePath)));
-            int width = tiles.getWidth();
-            int height = tiles.getHeight();
+            // Parse the JSON file
+            JSONParser parser = new JSONParser();
+            InputStream inputStream = getClass().getResourceAsStream(mapPath);
+            assert inputStream != null;
+            JSONObject jsonObject = (JSONObject) parser.parse(new InputStreamReader(inputStream));
+            // Get the "layers" array from the root object
+            JSONArray layers = (JSONArray) jsonObject.get("layers");
 
-            int imagesRow = height/gp.originalTileSize;
-            int imagesCol = width/gp.originalTileSize;
+            // Access the first layer object in the "layers" array
+            JSONObject layer = (JSONObject) layers.get(0);
 
-            for(int i=0; i<imagesRow; i++) {
-                for(int j=0; j<imagesCol; j++) {
-                    tile[counter] = new Tile();
-                    //System.out.println(counter + " -> " + gp.originalTileSize*i + " - " + gp.originalTileSize*j);
-                    // Use efficient image scaling
-                    tile[counter].image = uTool.scaleImage(tiles.getSubimage(gp.originalTileSize*j, gp.originalTileSize*i,
-                            gp.originalTileSize, gp.originalTileSize), gp.tileSize, gp.tileSize);
+            // Get the "tiles" array from the layer object
+            JSONArray tiles = (JSONArray) layer.get("tiles");
 
-                    // Set collision for tiles
-                    if(counter!=13) {
-                        //System.out.println("Adding collision to tile " + counter);
-                        tile[counter].collision = true;
-                    }
+            // Iterate through tiles to load images
+            for (Object tileObj : tiles) {
+                JSONObject tileJson = (JSONObject) tileObj;
+                int id = Integer.parseInt((String) tileJson.get("id"));
 
-                    counter++;
+                tile[id] = new Tile();
+                String imagePath = "/maps/tiles/Tile_" + id + ".png";
+                BufferedImage tileImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
+                tile[id].image = uTool.scaleImage(tileImage, gp.tileSize, gp.tileSize);
+
+                // Set collision for tiles
+                if (id <= 13 || id == 19 || (id >= 23 && id <= 28) || id == 33 || id == 37 || id == 44 || 
+                    (id>=48 && id<=53) || (id>=57 && id<=65) || id==75 || (id>=77 && id<=81) || 
+                    (id>=86 && id<=93) || (id>=97 && id<=105)) {
+                    tile[id].collision = true;
                 }
-            }
 
-        } catch (IOException e){
+                counter++;
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println("Images loaded: " + counter);
     }
 
-    public void loadMap(String mapPath){
+    public void loadMap(){
         int counter = 0;
 
         // leggo json e metto numeri nella matrice
