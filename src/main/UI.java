@@ -2,6 +2,7 @@ package main;
 
 import entity.Entity;
 import object.OBJ_Heart;
+import object.OBJ_ManaCrystal;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -23,7 +24,9 @@ public class UI {
 
     // Player status
     public BufferedImage[] heart_bar = new BufferedImage[3];
-    public BufferedImage heart_full, heart_half, heart_blank;
+    public BufferedImage[] mana_bar = new BufferedImage[3];
+    public BufferedImage heart_begin, heart_tile, heart_end;
+    public BufferedImage crystal_begin, crystal_tile, crystal_end;
 
     // Messages
     ArrayList<String> message = new ArrayList<>();
@@ -71,11 +74,18 @@ public class UI {
 
         // Create HUD object
         Entity heart = new OBJ_Heart(gp);
-        heart_full = heart.image;
-        heart_half = heart.image2;
-        heart_blank = heart.image3;
-        String[] paths = {"/gui/status/Tile_01.png", "/gui/status/Tile_02.png", "/gui/status/Tile_03.png"};
+        heart_begin = heart.image;
+        heart_tile = heart.image2;
+        heart_end = heart.image3;
+        String[] paths = {"/gui/status/BarTile_01.png", "/gui/status/BarTile_02.png", "/gui/status/BarTile_03.png"};
         loadBar(heart_bar, paths);
+
+        Entity crystal = new OBJ_ManaCrystal(gp);
+        crystal_begin = crystal.image;
+        crystal_tile = crystal.image2;
+        crystal_end = crystal.image3;
+        String[] mana_paths = {"/gui/status/BarTile_10.png", "/gui/status/BarTile_11.png", "/gui/status/BarTile_12.png"};
+        loadBar(mana_bar, mana_paths);
 
     }
 
@@ -137,44 +147,62 @@ public class UI {
     }
 
     public void drawPlayerLife() {
-        int y = gp.tileSize/2;
-        int i = 0;
-
-        // Calculating how much bar display
+        int y = gp.tileSize/2-(3*gp.scale);
         int imgX = 10*gp.scale;
         int resetX = imgX;
-        int nBars = (gp.player.maxLife/2)-2;
-        g2.drawImage(heart_bar[0], imgX, y-(3*gp.scale), null);
-        imgX += gp.tileSize/2 + gp.tileSize/3;
+
+        // LIFE //
+        // Life Bar
+        int nBars = (gp.player.maxLife)-2;
+        g2.drawImage(heart_bar[0], imgX, y, null);
+        imgX += gp.tileSize;
         for(int j=0; j<nBars; j++){
-            g2.drawImage(heart_bar[1], imgX, y-(3*gp.scale), null);
-            imgX += gp.tileSize/2 + gp.tileSize/3;
+            g2.drawImage(heart_bar[1], imgX, y, null);
+            imgX += gp.tileSize;
         }
-        g2.drawImage(heart_bar[1], imgX, y-(3*gp.scale), null);
-        g2.drawImage(heart_bar[2], imgX + gp.tileSize/4, y-(3*gp.scale), null);
+        g2.drawImage(heart_bar[2], imgX, y, null);
 
-
+        // Life Color
         imgX = resetX;
-        imgX += (6*gp.scale);
-        y += (gp.scale/2);
-
-        // Draw current life
-        while(i < gp.player.life){
-            g2.drawImage(heart_blank, imgX, y, null);
-            i+=2;
-            imgX += gp.tileSize/2 + gp.tileSize/3;
+        int i = 1;
+        g2.drawImage(heart_begin, imgX, y, null);
+        imgX += gp.tileSize;
+        while(i < gp.player.life-1){
+            g2.drawImage(heart_tile, imgX, y, null);
+            i++;
+            imgX += gp.tileSize;
+        }
+        if(gp.player.life == gp.player.maxLife){
+            g2.drawImage(heart_end, imgX, y, null);
         }
 
+
+        // MANA //
+        // TODO CHECK NO MORE MANA
+        // Mana Bar
+        nBars = (gp.player.maxMana)-2;
+        imgX = 10*gp.scale;
+        y += gp.tileSize + gp.scale;
+        g2.drawImage(mana_bar[0], imgX, y, null);
+        imgX += gp.tileSize;
+        for(int j=0; j<nBars; j++){
+            g2.drawImage(mana_bar[1], imgX, y, null);
+            imgX += gp.tileSize;
+        }
+        g2.drawImage(mana_bar[2], imgX, y, null);
+
+        // Mana Color
         imgX = resetX;
-        // Draw current life
-        while(i < gp.player.life){
-            g2.drawImage(heart_half, imgX, y, null);
+        i = 1;
+        g2.drawImage(crystal_begin, imgX, y, null);
+        imgX += gp.tileSize;
+        while(i < gp.player.mana - 1){
+            g2.drawImage(crystal_tile, imgX, y, null);
             i++;
-            if(i < gp.player.life) {
-                g2.drawImage(heart_full, imgX, y, null);
-            }
-            i++;
-            imgX += gp.tileSize/2 + gp.tileSize/3;
+            imgX += gp.tileSize;
+        }
+        if(gp.player.mana == gp.player.maxMana) {
+            g2.drawImage(crystal_end, imgX, y, null);
         }
 
     }
@@ -340,7 +368,7 @@ public class UI {
         final int frameX = gp.tileSize;
         final int frameY = gp.tileSize;
         final int frameWidth = gp.tileSize*6;
-        final int frameHeight = gp.tileSize*9+(gp.tileSize/2);
+        final int frameHeight = gp.tileSize*10+(gp.tileSize/2);
         drawSubWindow(frameX, frameY, frameWidth, frameHeight);
 
         // Text
@@ -355,6 +383,8 @@ public class UI {
         g2.drawString("Level " , textX, textY);
         textY += lineHeight;
         g2.drawString("Life " , textX, textY);
+        textY += lineHeight;
+        g2.drawString("Mana " , textX, textY);
         textY += lineHeight;
         g2.drawString("Strenght " , textX, textY);
         textY += lineHeight;
@@ -382,6 +412,8 @@ public class UI {
         drawValues(String.valueOf(gp.player.level), tailX, textY, textX);
         textY += lineHeight;
         drawValues(String.valueOf(gp.player.life)+"/"+String.valueOf(gp.player.maxLife), tailX, textY, textX);
+        textY += lineHeight;
+        drawValues(String.valueOf(gp.player.mana)+"/"+String.valueOf(gp.player.maxMana), tailX, textY, textX);
         textY += lineHeight;
         drawValues(String.valueOf(gp.player.strenght), tailX, textY, textX);
         textY += lineHeight;
@@ -458,7 +490,7 @@ public class UI {
         int cursorHeight = gp.tileSize;
 
         // Draw cursor
-        g2.setColor(textColor);
+        g2.setColor(textColor); // TODO Got index out of bound here
         g2.setStroke(new BasicStroke(3));
         g2.drawRoundRect(cursorX, cursorY, cursorWidth, cursorHeight, 10, 10);
 

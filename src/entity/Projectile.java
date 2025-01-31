@@ -28,7 +28,9 @@ public class Projectile extends Entity{
         getSolidArea(direction);
      }
 
-     public void getSolidArea(String direction) { }
+    public void getSolidArea(String direction) { }
+    public boolean haveResource(Entity user) { return false;}
+    public void subtractResource(Entity user) { }
 
      public void getImage(String direction) {
         if (direction.equals("right")) {
@@ -43,7 +45,7 @@ public class Projectile extends Entity{
     }
 
     public void update() {
-        if (user == gp.player) {
+        if(user == gp.player) {
             // Check if the projectile hits a monster
             int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
             if(monsterIndex != -1) {
@@ -51,12 +53,15 @@ public class Projectile extends Entity{
                 alive = false;
             }
 
-        } /*else {
-            if (gp.player.solidArea.intersects(solidArea)) {
-                gp.player.life -= attack;
+        }
+
+        if(user != gp.player) {
+            boolean contactPlayer = gp.cChecker.checkPlayer(this);
+            if(!gp.player.invincible && contactPlayer) {
+                damagePlayer(attack);
                 alive = false;
             }
-        }*/
+        }
 
         switch (direction) {
             case "up":

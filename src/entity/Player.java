@@ -16,8 +16,6 @@ import java.util.ArrayList;
 
 public class Player extends Entity {
     KeyHandler keyH;
-    public int keyAttack = KeyEvent.VK_J;
-    public int keyMana = KeyEvent.VK_K;
 
     boolean idle = true;
     public int character = 1;
@@ -62,8 +60,10 @@ public class Player extends Entity {
         direction = "right";
 
         // Player status
-        maxLife = 6;
+        maxLife = 12;
         life = maxLife;
+        maxMana = 8;
+        mana = maxMana;
 
         // Player stats
         level = 1;
@@ -223,9 +223,13 @@ public class Player extends Entity {
             }
 
             // Shooting mana
-            if(gp.keyH.shotKeyPressed && projectile.alive == false && shotAvaibleCounter == 30){
+            if(gp.keyH.shotKeyPressed && !projectile.alive && shotAvaibleCounter == 30 &&
+                    projectile.haveResource(this)){
                 // Set default direction
                 projectile.set(worldX, worldY, direction, true, this);
+
+                // subtract cost
+                projectile.subtractResource(this);
 
                 // Add to list
                 gp.projectileList.add(projectile);
@@ -253,7 +257,7 @@ public class Player extends Entity {
         if(spriteCounter > 8) {
             if(character == 1 || character == 3) {
                 // Archer shoots an arrow or Mage shoots a fireball
-                if(arrow.alive == false && shotAvaibleCounter == 30) {
+                if(!arrow.alive && shotAvaibleCounter == 30) {
                     arrow.set(worldX, worldY, direction, true, this);
                     gp.projectileList.add(arrow);
                     shotAvaibleCounter = 0;
@@ -497,3 +501,5 @@ public class Player extends Entity {
     }
 
 }
+
+// TODO Sometimes player gain damage while attack others

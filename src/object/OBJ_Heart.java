@@ -13,22 +13,16 @@ public class OBJ_Heart extends Entity {
         super(gp);
 
         name = "Heart";
-        spriteDimX = 16; //16
-        spriteDimY = 16; // 16
-        // Center the object in the tile
-        diffX = (gp.originalTileSize - spriteDimX)/2*gp.scale;
-        diffY = (gp.originalTileSize - spriteDimY)/2*gp.scale;
-
 
         try{
-            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/gui/status/heart_full.png")));
-            image = uTool.scaleImage(image, (spriteDimX*gp.scale)/2, (spriteDimY*gp.scale)/2);
+            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/gui/status/BarTileLife1.png")));
+            image = uTool.scaleImage(image, gp.tileSize, gp.tileSize);
 
-            image2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/gui/status/heart_half.png")));
-            image2 = uTool.scaleImage(image2, (spriteDimX*gp.scale)/2, (spriteDimY*gp.scale)/2);
+            image2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/gui/status/BarTileLife2.png")));
+            image2 = uTool.scaleImage(image2, gp.tileSize, gp.tileSize);
 
-            image3 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/gui/status/heart_empty.png")));
-            image3 = uTool.scaleImage(image, (spriteDimX*gp.scale)/2, (spriteDimY*gp.scale)/2);
+            image3 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/gui/status/BarTileLife3.png")));
+            image3 = uTool.scaleImage(image3, gp.tileSize, gp.tileSize);
 
         } catch (IOException e){
             e.printStackTrace();

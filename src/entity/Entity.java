@@ -101,6 +101,7 @@ public class Entity {
     public Projectile projectile;
     public int useCost;
     public int shotAvaibleCounter = 0;
+    public int ammo = 10;
 
     public Entity(GamePanel gp) {
         this.gp = gp;
@@ -191,12 +192,6 @@ public class Entity {
             // Sprite Attack
             if(spriteNum < 23){
                 spriteNum++;
-                /*switch (direction) {
-                    case "up" -> worldY += 5 * gp.scale;
-                    case "down" -> worldY -= 5 * gp.scale;
-                    case "left" -> worldX += 5 * gp.scale;
-                    case "right" -> worldX -= 5 * gp.scale;
-                }*/
             }
             spriteCounter = 0;
         }
@@ -239,17 +234,7 @@ public class Entity {
 
         // If it is a monster and it is in contact with the player
         if(this.type == typeMonster && contactPlayer) {
-            if(!gp.player.invincible) {
-                gp.playSE(6);
-                int damage = attack - gp.player.defense;
-                if(damage < 0){
-                    damage = 0;
-                } else {
-                    // If no damage no invincible
-                    gp.player.invincible = true;
-                }
-                gp.player.life -= damage;
-            }
+            damagePlayer(attack);
         }
 
         // Moving
@@ -261,41 +246,6 @@ public class Entity {
                 case "right" -> worldX += speed;
             }
         }
-        
-        // If it is hurting i don't want upadte the sprite
-        if(!hurt){
-            spriteCounter++;
-            if(spriteCounter>12){
-                if(attacking) {
-                    spriteNum++;
-                    if(spriteNum > 13) {
-                        spriteNum = 0;
-                        attacking = false;
-                    }
-                } else {
-                    if (idle) {
-                        // Idle
-                        if (spriteNum < 6) {
-                            spriteNum = 6;
-                        }
-
-                        if (spriteNum < 9) {
-                            spriteNum++;
-                        } else {
-                            spriteNum = 6;
-                        }
-                    } else {
-                        // Movement
-                        if (spriteNum < 5) {
-                            spriteNum++;
-                        } else {
-                            spriteNum = 0;
-                        }
-                    }
-                }
-            spriteCounter = 0;
-            }
-        }
 
         // Invincible counter
         if(invincible) {
@@ -304,6 +254,24 @@ public class Entity {
                 invincible = false;
                 invincibleCounter = 0;
             }
+        }
+
+        if(shotAvaibleCounter < 30) {
+            shotAvaibleCounter++;
+        }
+    }
+
+    public void damagePlayer(int attack) {
+        if(!gp.player.invincible) {
+            gp.playSE(6);
+            int damage = attack - gp.player.defense;
+            if(damage < 0){
+                damage = 0;
+            } else {
+                // If no damage no invincible
+                gp.player.invincible = true;
+            }
+            gp.player.life -= damage;
         }
     }
 

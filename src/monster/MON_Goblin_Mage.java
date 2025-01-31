@@ -3,7 +3,10 @@ package monster;
 import java.util.Random;
 
 import entity.Entity;
+import entity.Projectile;
 import main.GamePanel;
+import weapon.OBJ_Fireball;
+import weapon.OBJ_Rock;
 
 public class MON_Goblin_Mage extends Entity{
 
@@ -21,6 +24,9 @@ public class MON_Goblin_Mage extends Entity{
         attack = 8;
         defense = 2;
         exp = 20;
+
+        // Projectile
+        projectile = new OBJ_Rock(gp);
 
         solidArea.x = 3*gp.scale;
         solidArea.y = 3*gp.scale;
@@ -54,6 +60,16 @@ public class MON_Goblin_Mage extends Entity{
             }
 
             actionLockCounter = 0;
+
+        }
+
+
+        int i = new Random().nextInt(100)+1;
+        if(i > 99 && !projectile.alive && shotAvaibleCounter == 30) {
+            projectile.set(worldX, worldY, direction, true, this);
+            gp.projectileList.add(projectile);
+            shotAvaibleCounter = 0;
+
         }
 
     }

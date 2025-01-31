@@ -4,15 +4,15 @@ import entity.Entity;
 import entity.Projectile;
 import main.GamePanel;
 
-public class OBJ_Fireball extends Projectile{
+public class OBJ_Rock extends Projectile{
 
-    public OBJ_Fireball(GamePanel gp) {
+    public OBJ_Rock(GamePanel gp) {
         super(gp);
 
         name = "Fireball";
 
         // Set the object type
-        speed = 5;
+        speed = 7;
         maxLife = 80;
         life = maxLife;
 
@@ -45,10 +45,10 @@ public class OBJ_Fireball extends Projectile{
     }
 
     public boolean haveResource(Entity user) {
-        return user.mana >= useCost;
+        return user.ammo >= useCost;
     }
 
     public void subtractResource(Entity user) {
-        user.mana -= useCost;
+        user.ammo -= useCost;
     }
 }
